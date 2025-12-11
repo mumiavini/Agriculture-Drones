@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+*.csv
+data/raw/
+.vscode/
+.env
+*.xlsx
+# LaTeX build files
+*.bbl
+*.blg
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
+*.fdb_latexmk
+*.fls 

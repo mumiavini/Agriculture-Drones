@@ -1,0 +1,247 @@
+\documentclass[a4paper,12pt]{article}
+
+% Pacotes de codificação e linguagem
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+
+% Pacotes para matemática e símbolos
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+
+% Pacotes para formatação de layout
+\usepackage{geometry}
+\geometry{a4paper, left=3cm, right=2cm, top=3cm, bottom=2cm}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{float} 
+
+% Pacotes para tabelas
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+
+% Pacotes de links (hyperref deve ser o último ou quase o último)
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+    citecolor=black,
+    pdfencoding=auto % Ajuda com caracteres especiais nos bookmarks
+}
+
+% --- INFORMAÇÕES DO DOCUMENTO ---
+\title{\textbf{Pontapé inicial PIBITI}\\ °\\Análise Comparativa de Motores e Hélices de uso em Aeronaves Agrícolas de 
+Asa Fixa. }
+\author{Vinicius Andrade Trento}
+\date{\today}
+\onehalfspacing
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+% --- INÍCIO DO CONTEÚDO ---
+
+\section{Introdução e Contextualização do Cenário Tecnológico}
+
+A ascensão dos Veículos Aéreos Não Tripulados (VANTs) de asa fixa transcendeu o âmbito do aeromodelismo recreativo para se tornar um pilar fundamental em aplicações de engenharia, defesa, agricultura de precisão e monitoramento ambiental. Diferentemente das plataformas de asa rotativa (multirrotores), que priorizam a manobrabilidade e o voo estacionário, os VANTs de asa fixa são projetados com foco na eficiência aerodinâmica, alcance estendido e autonomia prolongada.
+
+No contexto de um projeto de Iniciação Científica e Tecnológica (PIBITI), a seleção e a integração do sistema de propulsão não podem ser tratadas como meras escolhas de prateleira; elas exigem uma compreensão profunda dos fenômenos físicos subjacentes, das limitações dos materiais e das interações complexas entre componentes eletromecânicos e aerodinâmicos.
+
+A eficiência global de uma aeronave elétrica é o produto das eficiências individuais de seus subsistemas: a fonte de energia (bateria), o controlador de velocidade (ESC), o motor elétrico e o propulsor (hélice). Em regimes de microaviação, onde os números de Reynolds são baixos (tipicamente entre $10^4$ e $5 \times 10^5$), os pressupostos clássicos da aerodinâmica de grandes aeronaves muitas vezes falham ou exigem correções significativas. A camada limite laminar tende a ser instável, e a separação do fluxo pode ocorrer abruptamente, degradando o desempenho da hélice de maneiras não lineares.
+
+Simultaneamente, a conversão eletromecânica nos motores \textit{Brushless Direct Current} (BLDC) é afetada por perdas térmicas, saturação magnética e ineficiências de comutação que variam drasticamente com a carga e a rotação.
+
+Este relatório tem como objetivo fornecer uma análise exaustiva e detalhada sobre o estado da arte em motores e hélices para VANTs de asa fixa. A pesquisa aprofunda-se na física dos componentes, analisando desde a microestrutura dos materiais magnéticos até a hidrodinâmica do ar sobre as pás da hélice. O documento visa equipar o pesquisador com o conhecimento necessário para realizar escolhas de engenharia baseadas em dados, maximizando a densidade de potência e a eficiência energética do sistema. Serão abordadas as nuances de design de motores (Inrunner vs. Outrunner), a ciência dos materiais de hélices (polímeros vs. compósitos), a eletrônica de potência e as metodologias de validação experimental, culminando em uma estrutura de decisão robusta para o desenvolvimento de plataformas aéreas de alto desempenho.
+
+\subsection{A Problemática da Escala e Eficiência}
+
+O desafio central no desenvolvimento de VANTs de médio porte (2kg a 10kg de MTOW - \textit{Maximum Takeoff Weight}) reside na ``barreira da eficiência''. À medida que o tamanho da aeronave diminui, a relação superfície-volume aumenta, exacerbando os efeitos da viscosidade do ar. Motores elétricos menores, embora potentes, sofrem com a dissipação de calor devido à menor massa térmica. Hélices menores giram mais rápido para gerar o mesmo empuxo, aproximando as pontas das pás de velocidades transônicas onde o arrasto de onda se torna proibitivo.
+
+Portanto, a otimização não é apenas uma questão de selecionar o componente ``mais forte'', mas sim de encontrar o ponto de operação (\textit{Operating Point}) onde a curva de eficiência do motor intercepta a curva de potência requerida pela hélice, preferencialmente na velocidade de cruzeiro projetada para a missão.
+
+\section{Fundamentação Teórica da Aerodinâmica e Propulsão}
+
+Para fundamentar a análise comparativa de tecnologias, é imperativo estabelecer os princípios físicos que regem a operação de hélices e motores em pequena escala. A compreensão teórica permite prever comportamentos que muitas vezes não são explicitados nas folhas de dados dos fabricantes.
+
+\subsection{O Regime de Baixo Número de Reynolds}
+
+O número de Reynolds ($Re$) é um parâmetro adimensional que quantifica a importância relativa das forças inerciais em comparação com as forças viscosas em um fluido. Para uma seção da pá de uma hélice, o $Re$ é definido como:
+
+\begin{equation}
+    Re = \frac{\rho \cdot v \cdot c}{\mu}
+\end{equation}
+
+Onde $\rho$ é a densidade do ar, $v$ é a velocidade relativa resultante na seção da pá, $c$ é a corda do perfil aerodinâmico e $\mu$ é a viscosidade dinâmica do ar.
+
+Em VANTs, as seções da hélice próximas ao cubo operam em $Re$ muito baixos ($< 50.000$), onde o fluxo é predominantemente laminar, mas propenso à separação sob gradientes de pressão adversos. Um fenômeno crítico neste regime é a ``Bolha de Separação Laminar'' (\textit{Laminar Separation Bubble} - LSB). Em baixos $Re$, a camada limite laminar pode se separar da superfície da pá antes da transição para turbulenta. Se a transição ocorrer na camada cisalhada separada, o fluxo turbulento resultante pode re-aderir à superfície, formando uma bolha. Embora a re-adesão restaure parcialmente a sustentação, a presença da bolha altera a forma efetiva do perfil aerodinâmico e aumenta drasticamente o arrasto de pressão. Hélices projetadas sem considerar esse fenômeno podem apresentar eficiências até 20\% inferiores ao previsto.
+
+\subsection{Teorias de Hélice: Momento vs. Elemento de Pá}
+
+A análise de desempenho de hélices baseia-se em duas teorias principais que, quando combinadas, formam a Teoria do Elemento de Pá e Momento (BEMT - \textit{Blade Element Momentum Theory}):
+
+\begin{enumerate}
+    \item \textbf{Teoria do Momento (Actuator Disk Theory):} Trata a hélice como um disco infinitamente fino que introduz um salto de pressão no fluido. Fornece o limite superior teórico de eficiência (Eficiência de Froude).
+    \item \textbf{Teoria do Elemento de Pá (BET):} Divide a pá em seções radiais discretas. Cada elemento é tratado como um perfil aerodinâmico 2D, com forças de sustentação ($dL$) e arrasto ($dD$).
+\end{enumerate}
+
+A métrica de desempenho mais relevante é a eficiência da hélice ($\eta_p$) em função da Razão de Avanço ($J$):
+
+\begin{equation}
+    J = \frac{V_{\infty}}{n \cdot D}
+\end{equation}
+
+\begin{equation}
+    \eta_p = J \cdot \frac{C_T}{C_P}
+\end{equation}
+
+Onde $V_{\infty}$ é a velocidade de voo, $n$ é a rotação (rps), $D$ é o diâmetro, $C_T$ é o coeficiente de empuxo e $C_P$ é o coeficiente de potência. A curva de eficiência de uma hélice de passo fixo apresenta um pico distinto em um determinado $J$. Operar fora desse pico resulta em desperdício de energia.
+
+\subsection{Conversão Eletromecânica em Motores BLDC}
+
+Os motores síncronos de ímã permanente sem escovas (BLDC) dominam a propulsão. O torque ($T_m$) é gerado pela interação entre o fluxo magnético ($\phi$) e a corrente ($I$), governado pela Lei de Lorentz:
+
+\begin{equation}
+    T_m = K_T \cdot (I_{total} - I_{vazio})
+\end{equation}
+
+A velocidade angular ($\omega$) é proporcional à força contra-eletromotriz (Back-EMF):
+
+\begin{equation}
+    \omega = K_V \cdot (V_{in} - I \cdot R_m)
+\end{equation}
+
+Onde $K_T$ é a constante de torque (N.m/A), $K_V$ é a constante de velocidade (rad/s/V) e $R_m$ é a resistência interna. Em um sistema SI ideal, $K_T \cdot K_V \approx 1$. Motores com alto $K_V$ (alta velocidade) produzem naturalmente menos torque por Ampere.
+
+\section{Análise Detalhada de Motores para VANTs}
+
+A seleção do motor é o primeiro passo crítico. A tecnologia BLDC ramificou-se em arquiteturas distintas.
+
+\subsection{Arquitetura Mecânica: Outrunner vs. Inrunner}
+
+\subsubsection{Motores Outrunner (Rotor Externo)}
+Na configuração Outrunner, o estator é fixo ao centro e o rotor (sino com ímãs) gira externamente.
+\begin{itemize}
+    \item \textbf{Mecânica do Torque:} O maior diâmetro fornece um braço de alavanca maior, resultando em mais torque para a mesma corrente (permite \textit{direct drive}).
+    \item \textbf{Inércia Rotacional:} Atua como um volante, suavizando variações de rotação.
+    \item \textbf{Refrigeração:} O sino atua como bomba centrífuga, mas o estator central pode aquecer.
+\end{itemize}
+
+\subsubsection{Motores Inrunner (Rotor Interno)}
+O rotor gira dentro do estator fixo.
+\begin{itemize}
+    \item \textbf{Densidade de Potência:} Permite rotações extremas (até 100.000 RPM).
+    \item \textbf{Gestão Térmica:} O estator está em contato com a carcaça, facilitando a dissipação de calor.
+    \item \textbf{Necessidade de Redução:} Geralmente exige caixa de redução (\textit{gearbox}) para VANTs de asa fixa.
+\end{itemize}
+
+% Tabela Comparativa Outrunner vs Inrunner
+\begin{table}[H]
+\centering
+\caption{Comparação: Outrunner vs. Inrunner}
+\label{tab:motores}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+\textbf{Característica} & \textbf{Outrunner (Direct Drive)} & \textbf{Inrunner (Geared Drive)} \\ \midrule
+Complexidade Mecânica & Baixa & Alta (requer manutenção da caixa) \\
+Ruído Acústico & Baixo (apenas ruído aerodinâmico) & Alto (ruído de engrenagens) \\
+Refrigeração & Dependente de fluxo de ar & Excelente (condução direta à carcaça) \\
+Custo & Baixo/Médio & Alto (devido à caixa de precisão) \\
+Eficiência de Pico & 75\%--85\% & 85\%--90\% (Motor) / $\sim$85\% (Sistema) \\
+Aplicação Ideal & VANTs de vigilância, mapeamento, carga & Planadores de alta performance \\ \bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Ciência dos Materiais no Estator e Rotor}
+
+\subsubsection{Laminações do Estator}
+O núcleo é laminado para mitigar correntes de Foucault. Motores ``Premium'' usam lâminas de 0.20mm ou 0.15mm (ex: Kawasaki), reduzindo drasticamente perdas no ferro e operando mais frios em cruzeiro.
+
+\subsubsection{Tecnologia de Ímãs}
+Ímãs de Neodímio (NdFeB) são sensíveis à temperatura. Um ímã N52 padrão perde magnetismo a $80^{\circ}C$. Para projetos profissionais (PIBITI), recomenda-se classes N42SH ou N45UH, que suportam até $150^{\circ}C$ ou $180^{\circ}C$.
+
+\subsection{Topologia de Enrolamento}
+\begin{itemize}
+    \item \textbf{Fio Único vs. Multi-Strand:} Fio único maximiza o cobre (Fator de Preenchimento) e reduz $R_m$, sendo superior para alta performance.
+    \item \textbf{Delta ($\Delta$) vs. Estrela (Y):} Delta oferece maior RPM; Estrela oferece mais torque por Ampere.
+\end{itemize}
+
+\section{Tecnologia Avançada de Hélices}
+
+\subsection{Materiais e Comportamento Aeroelástico}
+\begin{itemize}
+    \item \textbf{Polímeros (Nylon/ABS):} Flexíveis, perdem eficiência sob carga (``despassam'') e vibram.
+    \item \textbf{Fibra de Carbono (CFRP):} Alta rigidez, mantém geometria precisa, maior frequência natural de vibração (melhor para sensores).
+\end{itemize}
+
+\subsection{Geometria e Design de Lâmina}
+Para asa fixa, o foco é a eficiência de cruzeiro ($\eta_{cruise}$). Hélices dobráveis (\textit{Folding Props}) são essenciais para reduzir arrasto em planeio. A eficiência aerodinâmica diminui com o aumento do número de pás; 2 pás são mais eficientes que 3, a menos que haja restrição de diâmetro.
+
+\section{Eletrônica de Controle e Integração de Potência}
+
+\subsection{Algoritmos de Comutação: O Salto para FOC}
+ESCs modernos utilizam \textit{Field Oriented Control} (FOC) / Onda Senoidal em vez de trapezoidal. Isso reduz ruído, vibração e aquecimento, aumentando a eficiência global em 5-10\%. Também permite frenagem regenerativa controlada.
+
+\subsection{O Impacto da Bateria na Eficiência}
+\begin{itemize}
+    \item \textbf{LiPo:} Baixa resistência interna, alta descarga. Ideal para decolagens. Densidade: $\sim$160-200 Wh/kg.
+    \item \textbf{Li-Ion (Células 18650/21700):} Alta densidade energética ($\sim$250-270 Wh/kg), mas corrente limitada. Ideal para cruzeiro de longo alcance (aumento de 30-40\% no tempo de voo).
+\end{itemize}
+
+\section{Análise Comparativa de Sistemas de Propulsão}
+
+\subsection{Elétrico vs. Combustão Interna (ICE)}
+Para VANTs acima de 5kg ou voos > 2 horas, a gasolina ainda possui maior densidade energética. Porém, motores elétricos oferecem baixa vibração, silêncio e confiabilidade. Para o escopo PIBITI (< 3 horas), o elétrico é superior operacionalmente.
+
+% CORREÇÃO AQUI: Uso de aspas LaTeX corretas no título para evitar crash
+\section{Metodologia de Otimização e ``Matching''}
+
+O processo deve ser iterativo:
+\begin{enumerate}
+    \item \textbf{Definição da Aeronave:} Estimar MTOW, área e $C_{D_0}$.
+    \item \textbf{Cálculo de Potência de Cruzeiro:}
+    \begin{equation}
+        P_{req} = \frac{1}{2} \rho V^3 S C_D
+    \end{equation}
+    \item \textbf{Seleção da Hélice:} Maior diâmetro possível. Pitch Speed 20-30\% acima da $V_{cruzeiro}$.
+    \item \textbf{Seleção do Motor:} KV que atinja a RPM necessária com eficiência > 80\%.
+    \item \textbf{Verificação Térmica.}
+\end{enumerate}
+
+\subsection{Tabela de Comparação de Cenários (Exemplo 4kg UAV)}
+
+\begin{table}[H]
+\centering
+\caption{Cenários de Powertrain (VANT 4kg)}
+\label{tab:cenarios}
+\begin{tabularx}{\textwidth}{@{}XXXXXX@{}}
+\toprule
+\textbf{Config.} & \textbf{Motor} & \textbf{Hélice} & \textbf{Bateria (1kg)} & \textbf{Tempo} & \textbf{Caract.} \\ \midrule
+High Speed & 3548 1100KV & 10x6 APC E & 4S 10Ah LiPo & 45 min & Rápido, ágil, ruidoso, ineficiente. \\
+Endurance Padrão & 4120 450KV & 15x10 APC MR & 6S 8Ah LiPo & 75 min & Bom equilíbrio, voo estável. \\
+Alta Eficiência & 4120 380KV & 16x12 Carbon Fold & 6S 21Ah Li-Ion & 110 min+ & Cruzeiro extremamente eficiente, requer lançamento cuidadoso. \\ \bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Procedimentos de Teste e Validação Experimental}
+
+\subsection{Caracterização em Bancada Estática (Dyno)}
+Essencial para medir empuxo, RPM, tensão, corrente e temperatura. Nota: O empuxo estático consome corrente máxima; em voo, ocorre o efeito de ``unloading'' (redução de corrente).
+
+\subsection{Telemetria e Teste de Voo Real}
+Validação final com \textit{Blackbox} (ex: Pixhawk). O uso de tubo de Pitot é obrigatório.
+\textbf{Métrica de Otimização:} Minimizar Wh/km. Meta para VANT 2-3kg: 40 a 60 Wh/km.
+
+\section{Conclusão}
+
+A inovação em um projeto PIBITI reside na integração sistêmica inteligente. Recomenda-se abandonar a ``tentativa e erro'' em favor de simulação BEMT e validação rigorosa. A combinação de motores BLDC de alta qualidade, hélices de carbono rígidas e baterias Li-Ion representa o estado da arte para maximizar o desempenho de VANTs de asa fixa.
+
+\end{document}
