@@ -25,7 +25,7 @@
     pdfencoding=auto
 }
 
-\title{\textbf{PIBIT}\\ °\\Analise Comparativa de Motores e Hélices de uso em Aeronaves agrícolas de Asa Fixa}
+\title{\textbf{PIBITI}\\ °\\Análise Comparativa de Motores e Hélices de uso em Aeronaves Agrícolas de Asa Fixa}
 \author{Vinicius Andrade Trento}
 \date{\today}
 \onehalfspacing
@@ -40,129 +40,229 @@
 
 \section{Contextualização e Definição dos Requisitos de Engenharia}
 
-O presente relatório constitui a execução da fase de pesquisa fundamental delineada no Plano de Trabalho PIBIT, com foco específico no desenvolvimento de soluções para o projeto NAPI - Aeronaves de Pequeno Porte.
+O presente relatório constitui a execução da fase de pesquisa fundamental delineada no Plano de Trabalho PIBIT, com foco específico no desenvolvimento de soluções para o projeto NAPI - Aeronaves de Pequeno Porte. A missão central consiste em subsidiar a engenharia de sistemas para o AGRO-VANT, uma plataforma de asa fixa destinada a operações agrícolas que exigem robustez para cargas úteis elevadas (categorias \textit{Heavy} e \textit{Super Heavy}) e autonomia estendida.
 
-A missão central consiste em subsidiar a engenharia de sistemas para o AGRO-VANT, uma plataforma de asa fixa destinada a operações agrícolas que exigem robustez para cargas úteis elevadas (categorias \textit{Heavy} e \textit{Super Heavy}) e autonomia estendida.
-
-A transição de aeronaves leves para plataformas pesadas (MTOW > \SI{25}{kg}) e superpesadas (MTOW > \SI{150}{kg}) impõe uma mudança paradigmática na seleção de componentes. Diferente dos drones de pequeno porte, onde a simplicidade e o baixo custo dominam, a classe pesada exige certificação de confiabilidade, redundância crítica e eficiência termodinâmica otimizada.
+A transição das configurações multirrotor para arquiteturas de asa fixa apresenta-se como uma evolução técnica necessária para maximizar a cobertura de área por voo e otimizar a eficiência energética. Essa mudança justifica-se pela limitação dos multirrotores em satisfazer requisitos de larga escala, dada a sua dependência de sustentação vetorial contínua. A adoção de plataformas pesadas (MTOW > \SI{25}{kg}) e superpesadas (MTOW > \SI{150}{kg}) impõe critérios rigorosos na seleção de componentes, exigindo níveis adequados de confiabilidade, redundância e eficiência termodinâmica.
 
 \subsection{O Envelope Operacional Agrícola}
-O ambiente agrícola apresenta desafios singulares que definem os requisitos de propulsão:
+O envelope operacional agrícola impõe exigências específicas sobre a engenharia aeronáutica da plataforma:
 
 \begin{itemize}
-    \item \textbf{Ciclos de Carga:} Ao contrário de voos de cruzeiro estáveis, a aplicação agrícola envolve ``tiros'' de pulverização, curvas de reversão apertadas e variações constantes de altitude (seguimento de terreno), exigindo resposta rápida do acelerador (\textit{throttle response}).
-    \item \textbf{Atmosfera Hostil:} A presença de material particulado, umidade elevada e vapores químicos corrosivos exige que motores e aviônica possuam blindagem (IP ratings elevados) e filtragem de ar superior.
-    \item \textbf{Densidade de Altitude:} Operações no interior do Brasil frequentemente ocorrem em dias quentes e altitudes consideráveis, reduzindo a densidade do ar ($\rho$). Isso afeta diretamente a mistura ar-combustível em motores aspirados e a eficiência de empuxo das hélices, exigindo margens de potência (\textit{power reserve}) superiores a 30\%.
-\end{itemize}
+    \item \textbf{Ciclos de Carga e Dinâmica de Voo:} A operação caracteriza-se por ciclos de carga mecânica e térmica elevados. A aplicação envolve voos a baixa altitude sobre a cultura, exigindo resposta rápida do motor (\textit{throttle response}) para manobras de retorno e evasão de obstáculos imprevistos.
+    
+    \item \textbf{Atmosfera Operacional:} As missões ocorrem em ambientes com alta concentração de material particulado em suspensão e vapores químicos provenientes dos defensivos. Essa condição exige índices de proteção IP (\textit{Ingress Protection}) elevados para os componentes eletrônicos e sistemas eficientes de filtragem de ar.
+    
+    \item \textbf{Densidade de Altitude:} Operações no interior do Brasil frequentemente ocorrem em dias quentes e regiões de planalto, resultando em redução da densidade do ar ($\rho$). Esse fator afeta a sustentação aerodinâmica e a eficiência volumétrica dos motores de combustão interna. Para mitigar o risco de perda de desempenho, o dimensionamento do grupo motopropulsor deve prever margens de potência instalada superiores a 30\% em relação ao peso máximo de decolagem.
+    
+    \item \textbf{Variação de Massa e Centro de Gravidade:} Durante a fase de pulverização, o peso da aeronave decresce substancialmente à medida que a carga útil é ejetada, alterando a posição do centro de gravidade (CG) e a carga alar (\textit{wing loading}). Isso requer leis de controle de voo adaptativas e uma propulsão com faixa de operação elástica.
+\end{itemize}   
 
-\section{Análise Aprofundada de Motores de Combustão Interna (ICE)}
+\section{Análise de Motores de Combustão Interna (ICE)}
 
-Para aeronaves de asa fixa de grande porte destinadas a longas durações de voo (endurance > 2 horas), a densidade energética dos hidrocarbonetos permanece insuperável pela tecnologia de baterias atual. A gasolina aeronáutica (Avgas) ou automotiva premium oferece cerca de \SI{12000}{Wh/kg}, enquanto as melhores baterias de Lítio atingem \SI{250}{Wh/kg} a \SI{300}{Wh/kg}.
+Considerando o atual estado da arte do armazenamento eletroquímico de energia, os Motores de Combustão Interna (ICE - \textit{Internal Combustion Engines}) mantêm-se como a principal fonte motriz em VANTs agrícolas das classes \textit{Heavy} e \textit{Super Heavy}. Essa predominância baseia-se na densidade energética específica dos combustíveis hidrocarbonetos (aproximadamente \SI{12000}{Wh/kg}), que supera os sistemas de baterias Li-Po/Li-Ion (faixa de 250 a \SI{300}{Wh/kg}). Para aeronaves acima de \SI{25}{kg} que demandam maior autonomia, a propulsão a combustão apresenta vantagem significativa na relação peso-potência prolongada.
+
+\subsection{Parâmetros Termodinâmicos e de Avaliação de Desempenho}
+Para o dimensionamento da planta motriz, utiliza-se a Pressão Média Efetiva ao Freio (BMEP - \textit{Brake Mean Effective Pressure}) como métrica de otimização volumétrica e mecânica. A BMEP quantifica o trabalho efetuado pelo motor por ciclo, permitindo a comparação da eficiência volumétrica e mecânica independentemente da cilindrada. 
+
+A autonomia (\textit{Endurance}) é avaliada pelo Consumo Específico de Combustível ao Freio (BSFC), que relaciona a vazão mássica de combustível consumida com a potência gerada, sendo a métrica principal para o dimensionamento do alcance de voo. Adicionalmente, a Eficiência Térmica ao Freio (BTE) determina a capacidade do sistema em converter a energia química do combustível em trabalho mecânico útil.
 
 \subsection{Motores de Ciclo Otto de 2 Tempos (2T)}
-Os motores de dois tempos representam o padrão industrial para drones na faixa de \SI{25}{kg} a \SI{120}{kg} devido à sua simplicidade mecânica e alta relação potência-peso (\textit{Power-to-Weight Ratio}).
+Os motores de ciclo Otto operando em 2T são o padrão na indústria para VANTs na faixa de \SI{25}{kg} a \SI{120}{kg}.
 
 \subsubsection{Arquitetura Mecânica e Dinâmica}
-A ausência de válvulas de admissão e escape (substituídas por janelas no cilindro) e a ignição a cada revolução do virabrequim conferem aos motores 2T uma capacidade de entrega de torque imediata.
-
 \begin{itemize}
-    \item \textbf{Configuração Boxer (Flat-Twin):} Para a aplicação no AGRO-VANT, a configuração de cilindros opostos (Boxer) é a recomendação técnica primária. O movimento simultâneo dos pistões para fora e para dentro cancela as forças de inércia de primeira ordem, reduzindo drasticamente a vibração transferida para a fuselagem.
-    \item \textbf{Sistemas de Admissão:} Motores de alta performance utilizam válvulas de palheta (\textit{reed valves}) no cárter. Elas otimizam o fluxo de mistura em baixas rotações e impedem o refluxo, melhorando o torque em regimes parciais – essencial para manter a velocidade de pulverização constante.
+    \item \textbf{Processo de Lavagem (\textit{Scavenging}):} O ciclo 2T integra exaustão e admissão, gerando um pulso de torque a cada rotação do virabrequim. Isso proporciona uma elevada relação potência-peso. A principal desvantagem é o aumento do consumo específico (SFC), devido à perda parcial de combustível fresco pelo duto de exaustão.
+    \item \textbf{Configuração Boxer (\textit{Flat-Twin}):} Para atenuar os elevados níveis de vibração característicos de motores monocilíndricos, adota-se o arranjo Boxer. O balanço harmônico dessa arquitetura reduz as vibrações sistêmicas, protegendo a estrutura da aeronave e a aviônica.
+    \item \textbf{Sistemas de Admissão:} O uso de válvulas de palheta (\textit{reed valves}) restringe a inversão do fluxo na admissão, mantendo a saturação da mistura e melhorando o torque em rotações parciais.
 \end{itemize}
 
 \subsubsection{Gerenciamento Térmico e Lubrificação}
+Motores 2T operam predominantemente com arrefecimento a ar por aletas. Voos agrícolas de baixa velocidade e alta rotação reduzem a transferência de calor convectiva. Para contornar essa limitação, exige-se o uso de defletores (\textit{engine baffling}) na carenagem para direcionar o fluxo de ar adequadamente aos cilindros. Falhas no arrefecimento podem comprometer a lubrificação (sistema pré-mix), levando a danos severos nos pistões ou gripagem dos anéis.
 
 \subsection{Motores de Ciclo Otto de 4 Tempos (4T)}
-Para a categoria ``Super Heavy'' (>\SI{150}{kg}) ou quando a eficiência de combustível é prioritária sobre a potência bruta, os motores 4T ganham relevância.
+Para plataformas superpesadas (MTOW > \SI{150}{kg}) e missões de longo alcance, a arquitetura 4T torna-se mais viável economicamente.
 
 \subsubsection{Eficiência Volumétrica e Consumo}
-Os motores 4T possuem um ciclo de admissão e escape dedicado, permitindo uma queima muito mais completa do combustível.
-
 \begin{itemize}
-    \item \textbf{Fuel Consumption} Um motor 2T típico consome \SI{450}{g/kWh} a \SI{600}{g/kWh}. Um motor 4T moderno com injeção pode atingir \SI{280}{g/kWh} a \SI{350}{g/kWh}.
-    \item \textbf{Confiabilidade:} A lubrificação por cárter úmido ou seco garante uma película de óleo constante, resultando em TBO (\textit{Time Between Overhaul}) de 1000 a 2000 horas.
+    \item \textbf{Eficiência no Consumo (BSFC):} A separação mecânica das fases de admissão e exaustão via válvulas maximiza o aproveitamento térmico. Isso reduz o consumo específico para faixas otimizadas de 280 a \SI{350}{g/kWh}.
+    \item \textbf{Confiabilidade e Robustez:} A configuração 4T apresenta maior robustez operacional, refletindo em um Intervalo Entre Revisões Gerais (TBO) de 1.000 a 2.000 horas em serviço intermitente.
 \end{itemize}
 
 \subsection{Injeção Eletrônica (EFI) vs. Carburação}
-A pesquisa aponta uma tendência irreversível para sistemas EFI em drones pesados.
+A limitação adaptativa dos sistemas carburados em lidar com variações barométricas exige a sua substituição por sistemas eletrônicos em operações profissionais. Um motor carburado calibrado ao nível do mar apresenta queda de rendimento em altitudes elevadas devido à menor densidade do ar.
+
+A Injeção Eletrônica de Combustível (EFI) processa dados de sensores estáticos, como o MAP (\textit{Manifold Absolute Pressure}) e o IAT (\textit{Intake Air Temperature}), em tempo real, ajustando os pulsos de injeção para manter a razão estequiométrica adequada frente às flutuações atmosféricas.
+
+\subsection{Especificações Comerciais de Motores a Combustão}
+
+A viabilização técnica requer a análise de equipamentos comerciais (\textit{COTS - Commercial Off-The-Shelf}). A Tabela \ref{tab:motores_ice} sumariza propulsores frequentemente integrados em VANTs de asa fixa.
+
+\begin{table}[H]
+\centering
+\caption{Perfil Comparativo de Motores de Combustão Interna para VANTs Pesados}
+\label{tab:motores_ice}
+\small
+\begin{tabularx}{\textwidth}{@{}llccX@{}}
+\toprule
+\textbf{Modelo \& Arq.} & \textbf{Potência} & \textbf{Peso*} & \textbf{BSFC}  \\ \midrule
+\textbf{Desert Aircraft DA-100L}\newline 2T Boxer (100cc) & \SI{9.8}{HP} & \SI{2.53}{kg}  \\
+\textbf{Inf-Inject DA-100 EFI}\newline 2T Boxer (100cc) & $\sim$\SI{10}{HP} & \SI{2.95}{kg} & +65\% Efi.  \\
+\textbf{DLE-120 EFI}\newline 2T Boxer (120cc) & \SI{12.0}{HP} & \SI{3.08}{kg} & - & \\
+\textbf{Hirth 4103}\newline 2T Boxer (100cc) & \SI{8.0}{HP} & \SI{3.40}{kg} & 440-517 g/kWh  \\
+\textbf{Hirth 4202 HF}\newline 2T Boxer (180cc) & $\sim$\SI{12.7}{HP} & \SI{9.30}{kg} & 400-701 g/kWh  \\
+\textbf{Saito FG-100TS}\newline 4T Boxer (100.3cc) & $\sim$7-\SI{8}{HP} & \SI{4.04}{kg} & Alta efi.  \\
+\textbf{Rotax 912 iS Sport}\newline 4T Boxer (1352cc) & \SI{100}{HP} & \SI{63.6}{kg} & 285 g/kWh &  \\ \bottomrule
+\multicolumn{5}{l}{\footnotesize O autor, baseado no catálogo dos fabricantes}
+\end{tabularx}
+\end{table}
+
+\section{Hibridização e Eletrificação de VANTs}
+
+A demanda por sistemas de menor impacto ambiental e manutenção simplificada impulsionou o desenvolvimento de plataformas puramente elétricas e híbridas.
+
+\subsection{Vetor de Tração Puramente Elétrico}
+Os sistemas elétricos apresentam alta eficiência na conversão de energia.
+
+\begin{table}[H]
+\centering
+\caption{Referenciais de Propulsores Elétricos para Carga Extrema (T-Motor)}
+\label{tab:motores_eletricos}
+\small
+\begin{tabularx}{\textwidth}{@{}lXllcc@{}}
+\toprule
+\textbf{Modelo} & \textbf{KV} & \textbf{Voltagem} & \textbf{Peso} & \textbf{Empuxo Máx.} & \textbf{Potência Cont./Pico} \\ \midrule
+\textbf{T-Motor U13 II} & 65 & 22-25S ($\sim$100V) & \SI{975}{g} & \SI{28.7}{kg} & \SI{6720}{W}  \\
+\textbf{T-Motor U15 II} & 80 & 12-24S ($\sim$100V) & \SI{1740}{g} & \SI{36.5}{kg} & 8580 / \SI{9942}{W}  \\
+\textbf{T-Motor VL1035} & 150 & 14S ($\sim$50V) & - & \SI{36.1}{kg} & \SI{4000}{W} (cont.)  \\ \bottomrule
+\end{tabularx}
+\end{table}
 
 \begin{itemize}
-    \item \textbf{Carburadores:} Incapazes de compensar variações de densidade do ar em tempo real.
-    \item \textbf{EFI:} A ECU ajusta o tempo de injeção em microssegundos, mais eficaz e garante economia maior de combustível.
+    \item \textbf{Eficiência Energética e Motores BLDC:} Motores elétricos sem escovas (BLDC - \textit{Brushless Direct Current}) atingem eficiências de 90\% a 95\%. Em comparação, motores de combustão operam na faixa de 25\% a 35\%.
+    \item \textbf{Controle por FOC (\textit{Field-Oriented Control}):} Essa modulação garante resposta dinâmica linear, reduzindo atrasos inerciais, oscilações e ruídos.
+    \item \textbf{Limitação Logística:} A viabilidade da tração elétrica em aeronaves cargueiras é restringida pela densidade de energia das baterias atuais. O peso adicional compromete a autonomia necessária para aplicações agrícolas em larga escala.
 \end{itemize}
 
-\section{Pesquisa de Sistemas de Propulsão Elétrica de Alta Performance}
+\subsection{Topologias das Arquiteturas Híbridas}
+Para contornar as limitações das baterias e aproveitar a eficiência dos motores elétricos, as arquiteturas híbridas apresentam-se como uma alternativa tecnológica viável.
 
-Embora limitados em autonomia total, os sistemas elétricos oferecem confiabilidade mecânica superior e controle de torque instantâneo.
-
-\subsection{Benefícios dos Motores Elétricos x Combustão}
+\subsubsection{Modelo Híbrido em Série}
+Nessa configuração, o motor a combustão atua exclusivamente como um gerador primário. 
 \begin{itemize}
-    \item \textbf{Eficiência Energética:} Motores elétricos atingem eficiência de 90\% a 95\%, enquanto motores de combustão típicos operam entre 25\% e 35\%.
-    \item \textbf{Controle Instantâneo de Torque:} O motor elétrico entrega torque máximo imediatamente, ideal para aceleração rápida e manobras.
-    \item \textbf{Manutenção Reduzida:} Sem válvulas, sem carburador, sem sistemas complexos de lubrificação.
-    \item \textbf{Silêncio Operacional:} Menor ruído em operação, reduzindo impacto sonoro no ambiente agrícola.
+    \item \textbf{Funcionamento:} O propulsor fornece energia para os Controladores Eletrônicos de Velocidade (ESC) ou para a recarga de baterias, operando em regime estacionário de RPM otimizado, enquanto motores elétricos realizam a tração.
+    \item \textbf{Aplicação e Desvantagens:} Essa topologia onera o peso da aeronave ao exigir o motor a combustão, o gerador e os motores elétricos de tração, resultando em um aumento de massa de 20\% a 40\%. O ganho marginal em economia de combustível (13\% a 24\%) reduz a atratividade do modelo para a categoria \textit{Super Heavy}.
 \end{itemize}
-\subsection{Tecnologias de Motor Elétrico}
+
+\subsubsection{Modelo Híbrido Paralelo}
+A arquitetura paralela acopla mecanicamente o motor a combustão e o motor elétrico no mesmo eixo de tração.
+
 \begin{itemize}
-    \item \textbf{Motores Brushless DC (BLDC):} Preferidos pela alta relação potência-peso e eficiência. Requerem controladores eletrônicos (ESC) avançados.
-    \item \textbf{Controle por FOC (Field-Oriented Control):} Permite controle preciso de torque e velocidade, otimizando a eficiência em toda a faixa operacional.
+    \item \textbf{Auxílio Trativo e Regeneração:} O sistema atua de forma combinada. O motor elétrico auxilia em fases críticas (decolagem e ganho de altitude) e atua como gerador em regimes de cruzeiro, recarregando o banco de baterias por meio do excesso de potência mecânica do motor térmico.
+    \item \textbf{Vantagens e Eficiência:} A integração permite a redução no tamanho do banco de baterias, mitigando o acréscimo estrutural de peso (cerca de 8\% adicionais). A economia de combustível pode chegar a 50\% em comparação com sistemas puramente térmicos.
+    \item \textbf{Recomendação:} A arquitetura paralela é a configuração mais recomendada para plataformas agrícolas de alto peso, garantindo flexibilidade operacional e otimização de alcance.
 \end{itemize}
 
-\section{Hélices: Aerodinâmica e Materiais para Carga Pesada}
+\section{Desempenho de Hélices e Seleção de Materiais}
 
-\subsection{Seleção de Material e Construção}
-A escolha do material impacta a assinatura de vibração do sistema propulsivo.
+A eficiência do sistema propulsivo depende da seleção adequada das hélices para a transmissão do torque. Na engenharia de VANTs focada na integração de sistemas de prateleira (COTS), o escopo principal do projeto direciona-se para a compatibilidade mecânica entre a hélice e o grupo motopropulsor, a tolerância a cargas dinâmicas e o controle rigoroso de vibrações estruturais.
+
+\subsection{Engenharia de Materiais na Resiliência Estrutural}
+A seleção do material da hélice afeta não apenas a eficiência aerodinâmica, mas a integridade estrutural e a propagação de vibrações pelo \textit{frame} do VANT. 
+
+Para motores a combustão (ICE), especialmente do ciclo 2T com grande deslocamento volumétrico, o uso de fibra de carbono rígida (CFRP) deve ser avaliado com cautela. A elevada rigidez do material transmite as vibrações torcionais do motor diretamente para o eixo, o que pode reduzir a vida útil dos rolamentos e induzir falhas mecânicas severas. Nessas aplicações, hélices de madeira laminada atuam como amortecedores naturais de vibração. Por outro lado, para tração puramente elétrica ou sistemas híbridos paralelos, onde o torque é contínuo e estável, hélices de CFRP são preferíveis pelo seu baixo peso e alta resistência à deflexão.
 
 \begin{table}[H]
 \centering
 \caption{Comparativo de Materiais de Hélices para Drones Pesados}
 \label{tab:helices}
-\small
-\begin{tabularx}{\textwidth}{@{}lXXXXX@{}}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{} l c c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
 \toprule
-\textbf{Material} & \textbf{Rigidez} & \textbf{Peso} & \textbf{Vibração} & \textbf{Resistência} & \textbf{Aplicação} \\ \midrule
-Madeira Laminada & Média & Médio & Alta Absorção & Baixa (Quebra segura) & Motores a combustão (amaciamento) \\
-Fibra de Carbono (CFRP) & Altíssima & Baixo & Baixa (Transmite) & Alta (Pode danificar eixo) & Elétricos e 2T balanceados \\
-Nylon/Carbono & Baixa & Médio & Média & Média & Drones menores (inadequado >25kg) \\ \bottomrule
+\textbf{Material} & \textbf{Rigidez} & \textbf{Peso} & \textbf{Vibração} & \textbf{Resistência} & \textbf{Aplicação Recomendada} \\ \midrule
+Madeira Laminada & Média & Médio & Alta Absorção & Baixa (Quebra segura) & Motores a combustão (mitigação de fadiga) \\
+\addlinespace
+Fibra de Carbono & Altíssima & Baixo & Baixa (Transmite) & Alta (Pode danificar eixo) & Motores Elétricos / Híbridos Paralelos \\
+\addlinespace
+Nylon/Carbono & Baixa & Médio & Média & Média & Drones leves (inadequado >\SI{25}{kg}) \\ \bottomrule
 \end{tabularx}
 \end{table}
 
-\section{Sensoriamento e Telemetria Avançada}
+\section{Sensoriamento, Telemetria e monitoramento Avançado}
 
-Para garantir a segurança operacional e o monitoramento detalhado da aeronave, a seguinte suíte de sensores deve ser integrada:
+Para garantir a segurança operacional e o monitoramento detalhado da aeronave, a arquitetura eletrônica é segmentada entre a rede interna de aviônicos (Intra-VANT) e a comunicação externa com a estação de solo (Extra-VANT).
+
+\subsection{Protocolos de Comunicação e Controle}
+\begin{itemize}
+    \item \textbf{Barramento Interno (CAN Bus / UAVCAN):} Para o gerenciamento de sistemas críticos (ESC, GPS RTK e injeção eletrônica), utiliza-se o padrão CAN Bus. Esse barramento diferencial provê elevado isolamento contra ruídos eletromagnéticos e permite a implementação de redundância de dados para a controladora principal (\textit{Pixhawk}).
+    
+    \item \textbf{Telemetria Externa (MAVLink):} A comunicação com a Estação de Controle em Solo (GCS) utiliza o protocolo MAVLink operando sobre redes de rádio (UHF 900 MHz) ou celulares (LTE/5G). Parâmetros vitais de voo podem ser sobrepostos à transmissão de vídeo por meio do sistema OSD (\textit{On-Screen Display}) para acompanhamento operacional do piloto.
+\end{itemize}
 
 \subsection{Monitoramento de Fluidos e Temperatura}
-\begin{itemize}
-    \item \textbf{Sensor de Fluxo de Combustível (Flowmeter):}
-    Em vez de medir o nível do tanque (que oscila durante o voo), este sensor mede o consumo real instantâneo. Isso permite que o sistema calcule a autonomia restante com alta precisão.
+A precisão na autonomia e a proteção termomecânica demandam sensores de leitura direta:
 
-    \item \textbf{Termopares (Sensores de Temperatura):}
-    Devem ser instalados dois tipos de sensores térmicos para proteção do motor:
+\begin{itemize}
+    \item \textbf{Sensor de Fluxo (Flowmeter):} Mede o consumo volumétrico instantâneo na linha de combustível, apresentando maior precisão que boias de nível mecânicas, as quais sofrem interferência por inércia durante o voo.
+    
+    \item \textbf{Termopares (Tipo K):} São essenciais para o gerenciamento da saúde do motor a combustão:
     \begin{itemize}
-        \item \textit{Sensor de Cabeçote (CHT):} Monitora se o motor está superaquecendo fisicamente, prevenindo travamento do pistão.
-        \item \textit{Sensor de Exaustão (EGT):} Monitora a temperatura dos gases de escape. Uma mudança brusca aqui alerta sobre falhas na queima (mistura pobre ou falha na vela) antes que o motor pare.
+        \item \textit{Sensor de Cabeçote (CHT):} Monitora a temperatura do bloco do cilindro, prevenindo danos por sobreaquecimento.
+        \item \textit{Sensor de Exaustão (EGT):} Fornece a temperatura dos gases ejetados. Variações anômalas no EGT indicam misturas ar/combustível fora da estequiometria ideal, permitindo correções na injeção eletrônica.
     \end{itemize}
 \end{itemize}
 
-\subsection{Monitoramento de Vibração}
-\begin{itemize}
-    \item \textbf{Acelerômetro:}
-    Utiliza-se o acelerômetro para ``escutar'' a saúde mecânica.
-    \item \textbf{Diagnóstico Automático:} O sistema identifica padrões de vibração que indicam se uma hélice está desbalanceada ou se os rolamentos internos do motor estão desgastados, alertando para manutenção preventiva.
-\end{itemize}
+\subsection{Digital Twins}
+
+Seção para abordar possibilidade de um sistema integrado de digital twins para um monitoramento em tempo real e de simulação de condições de contorno realistas. 
+
+\section{Referências Normativas e Requisitos de Certificação}
+
+Certificação e segurança das agências reguladoras (FAA, EASA e ABNT).
+
+\section{Conclusão e Combinações Recomendadas}
+
+Criar comparação entre cenários diferentes com combinações entre sistema de propulsão + hélice + sistemas de integração de telemetria e aviônica
 
 \newpage
 
 \begin{thebibliography}{99}
-   
+
+    % Fundamentos de Propulsão Aeroespacial e Combustão
+    \bibitem{elsayed2016}
+    El-Sayed, A. F. (2016). \textit{Fundamentals of Aircraft and Rocket Propulsion}. London: Springer.
+
+    \bibitem{heywood1988}
+    Heywood, J. B. (1988). \textit{Internal Combustion Engine Fundamentals}. New York: McGraw-Hill Education.
 
     % Materiais de Hélices (Nylon vs Carbono)
     \bibitem{tiruvenkadam2024}
-    Tiruvenkadam, N., et al. (2024). \textit{Investigation of Structural and Thermal Analysis of Drone Propeller Materials}. Journal of Physics: Conference Series, 2925, 012002. IOP Publishing. Disponível em: doi:10.1088/1742-6596/2925/1/012002[cite: 1962, 1963, 1982, 1984]
+    Tiruvenkadam, N., et al. (2024). \textit{Investigation of Structural and Thermal Analysis of Drone Propeller Materials}. Journal of Physics: Conference Series, 2925, 012002. IOP Publishing. Disponível em: \url{https://doi.org/10.1088/1742-6596/2925/1/012002}
 
-    % Motores de Combustão Interna (Fundamentação teórica e dados de consumo)
-    \bibitem{heywood1988}
-    Heywood, J. B. (1988). \textit{Internal Combustion Engine Fundamentals}. New York: McGraw-Hill Education.
+    % Especificações Comerciais de Motores a Combustão (ICE)
+    \bibitem{da100l}
+    AJ Aircraft. \textit{Desert Aircraft 100cc Gas Engine-DA 100L}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.aj-aircraft.com/Desert-Aircraft-100cc-Gas-Engine_p_433.html}
+
+    \bibitem{infinject}
+    INF Inject. \textit{INF INJECT DA 100 EFI – The Leaders of UAV Electronic Fuel Injected Solutions}. Acessado em: 11 de março de 2026. Disponível em: \url{https://infinject.com/inf-inject-da-100-efi/}
+
+    \bibitem{dle120}
+    DLE Engines. \textit{DLE120 RC Model engine}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.dlengine.com/en/rcengine/dle120-2/}
+
+    \bibitem{hirth4202}
+    Hirth Engines. \textit{Hirth 4202 - Lightweight Heavy Fuel Two-Stroke Engine}. Acessado em: 11 de março de 2026. Disponível em: \url{https://hirthengines.com/4202-heavy-fuel-two-stroke-engine/}
+
+    \bibitem{hirth4103}
+    Hirth Engines. \textit{Hirth 4103 - Air-Cooled Two-Stroke Engine}. Acessado em: 11 de março de 2026. Disponível em: \url{https://hirthengines.com/4103-engine-air-cooled-two-stroke-engine/}
+
+    \bibitem{rotax912}
+    Rotax Aircraft Engines. \textit{912 iS Sport | iSc Sport 100 HP}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.flyrotax.com/products/912-is-sport-isc-sport}
+
+    % Motores Elétricos para Carga Extrema
+    \bibitem{ligpower}
+    Ligpower. \textit{Heavy-lift Drone Motor (Max Thrust 100kg)}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.ligpower.com/categorys/heavy-lift-drone-motor}
+
+    \bibitem{vl1035}
+    T-Motor. \textit{VL1035 KV150 VTOL UAV Motor for 35kg Heavy-Lift Drones}. Acessado em: 11 de março de 2026. Disponível em: \url{https://store.tmotor.com/product/vl1035-large-drone-motors-for-heavy-lift-uavs.html}
 
 \end{thebibliography}
 
