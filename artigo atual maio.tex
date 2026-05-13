@@ -15,6 +15,10 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{enumitem}
+% Macro para destacar trechos sem citação (autoavaliar depois): negrito + sublinhado
+% Usa apenas comandos padrão LaTeX para máxima compatibilidade
+\newcommand{\autoeval}[1]{\textbf{\underline{#1}}}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -44,116 +48,137 @@ O presente relatório constitui a execução da fase de pesquisa fundamental del
 
 A transição das configurações multirrotor para arquiteturas de asa fixa apresenta-se como uma evolução técnica necessária para maximizar a cobertura de área por voo e otimizar a eficiência energética. Essa mudança justifica-se pela limitação dos multirrotores em satisfazer requisitos de larga escala, dada a sua dependência de sustentação vetorial contínua. Contudo, à medida que a plataforma escala em massa máxima de decolagem (MTOW), o problema deixa de ser apenas de seleção de componentes COTS (\textit{Commercial Off-The-Shelf}) e passa a se inserir em um regime de engenharia aeronáutica certificada, com requisitos termodinâmicos, estruturais e regulatórios substancialmente distintos dos VANTs convencionais.
 
-\subsection{Estratificação por Classe de MTOW e Foco do Trabalho}
+\subsection{Definição do Escopo: Aeronaves Agrícolas Leves Tripuladas (1{,}0 a 2{,}5 t)}
 
-Para fins de organização da análise comparativa, adota-se a seguinte estratificação por MTOW, alinhada às práticas regulatórias da ANAC, FAA e EASA:
+O presente trabalho concentra-se na faixa de Peso Máximo de Decolagem (MTOW) entre \SI{1000}{kg} e \SI{2500}{kg}, segmento que reúne as aeronaves agrícolas tripuladas de asa fixa mais utilizadas globalmente e que constitui referência direta para o dimensionamento do AGRO-VANT em sua configuração de máxima capacidade operacional. Esse recorte foi escolhido pelos seguintes motivos:
 
 \begin{itemize}
-    \item \textbf{Classe Pesada (\textit{Heavy}):} \SI{25}{kg} < MTOW $\leq$ \SI{150}{kg}. Engloba VANTs agrícolas comerciais (e.g., pulverizadores DJI Agras, XAG). Motorização tipicamente baseada em motores 2T de pequeno deslocamento ou propulsão elétrica multirrotor.
-    \item \textbf{Classe Superpesada (\textit{Super Heavy}):} \SI{150}{kg} < MTOW $\leq$ \SI{600}{kg}. Plataformas de asa fixa não tripuladas para missões de longo alcance. Motorização baseada em motores 2T e 4T boxer de média cilindrada.
-    \item \textbf{Classe de Aeronave Agrícola Tripulada / Drone Agrícola de Grande Porte (\textit{Class IV}):} MTOW $>$ \SI{1000}{kg}. \textbf{Foco principal deste trabalho.} Plataformas certificadas ou certificáveis sob regulamentos do tipo FAR 23 / RBAC 23 (aeronaves não-grandes) com operação regida pelo RBAC 137 no Brasil. Motorização baseada em motores aeronáuticos de pistão de grande cilindrada (e.g., família Lycoming O-540) ou turboélices (e.g., família Pratt \& Whitney PT6A).
+    \item \textbf{Maturidade tecnológica e disponibilidade de dados:} A faixa abriga plataformas operacionais consolidadas há mais de cinco décadas (Piper PA-25 Pawnee, Cessna 188 AgWagon, Piper PA-36 Pawnee Brave, Embraer EMB-200/201/202 Ipanema), o que assegura uma base extensa de dados de campo, manuais técnicos e referências normativas para análise comparativa.
+    \item \textbf{Convergência tecnológica em motor de pistão de grande cilindrada:} Diferentemente da faixa abaixo de \SI{600}{kg} (dominada por motores 2T COTS) ou da faixa acima de \SI{4000}{kg} (dominada por turboélices PT6A), o segmento 1--2{,}5 t apresenta soluções tecnologicamente convergentes em motores aeronáuticos de pistão de 6 a 8 cilindros horizontalmente opostos (boxer), com potências entre \SI{235}{HP} e \SI{400}{HP}.
+    \item \textbf{Aderência ao mercado brasileiro:} O EMB-202 Ipanema (MTOW \SI{1800}{kg}) detém aproximadamente 80\% da frota de pulverização aérea brasileira, situando-se exatamente no centro da faixa estudada.
+    \item \textbf{Quadro regulatório bem estabelecido:} Toda a faixa é regida pelos mesmos regulamentos (FAR 23 / RBAC 23 para aeronavegabilidade, FAR 137 / RBAC 137 para operação), permitindo um tratamento unificado dos requisitos de certificação.
 \end{itemize}
 
-A reorientação deste trabalho para a Classe IV (MTOW $>$ \SI{1000}{kg}) decorre da observação de que o envelope operacional de aeronaves agrícolas de grande porte --- exemplificadas no contexto brasileiro pelo Embraer EMB-202 Ipanema (MTOW \SI{1800}{kg}) e internacionalmente pela família Air Tractor (AT-502 a AT-802, com MTOW de \SI{4175}{kg} a \SI{7257}{kg}) --- impõe critérios de seleção de propulsão fundamentalmente distintos daqueles aplicáveis aos VANTs comerciais. O trabalho preserva, contudo, a análise das classes inferiores como referencial comparativo, permitindo evidenciar o ponto de transição tecnológica entre as arquiteturas.
+A Tabela \ref{tab:plataformas_referencia} apresenta as principais plataformas de referência consideradas neste estudo.
+
+\begin{table}[H]
+\centering
+\caption{Plataformas Agrícolas de Referência na Faixa de MTOW de 1 a 2{,}5 toneladas}
+\label{tab:plataformas_referencia}
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{} 
+    >{\hsize=1.0\hsize\raggedright\arraybackslash}X 
+    c 
+    c 
+    >{\hsize=1.0\hsize\raggedright\arraybackslash}X 
+    @{}}
+\toprule
+\textbf{Aeronave} & \textbf{MTOW (kg)} & \textbf{Hopper (L)} & \textbf{Motor (Potência)} \\ \midrule
+Piper PA-25-235 Pawnee B & $\sim$1.315 & 568--680 & Lycoming O-540-B2B5 (235 HP) \\
+\addlinespace
+Cessna 188 AgWagon B & 1.497 & 757 & Continental IO-520-D (300 HP) \\
+\addlinespace
+Embraer EMB-200 Ipanema & $\sim$1.550 & 580 & Lycoming O-540-H2B5D (260 HP) \\
+\addlinespace
+Embraer EMB-201A Ipanema & $\sim$1.550 & 750 & Lycoming IO-540-K1D5 (300 HP) \\
+\addlinespace
+Embraer EMB-202 Ipanema & 1.800 & 950 & Lycoming IO-540-K1J5 (300/320 HP) \\
+\addlinespace
+Cessna A188B AgTruck / AgHusky & 1.996 & 1.060 & Continental IO-520-D / TSIO-520-T (300/310 HP) \\
+\addlinespace
+Piper PA-36 Pawnee Brave 300 & 1.996--2.177 & 850--1.080 & Lycoming IO-540-K1G5 (300 HP) \\
+\addlinespace
+Piper PA-36 Brave 375 / 400 & $\sim$2.177 & 1.080 & Lycoming IO-720-D1CD (375--400 HP) \\ \bottomrule
+\multicolumn{4}{l}{\footnotesize Compilação do autor a partir de catálogos dos fabricantes e referências históricas \cite{embraer202, piper_pa25, cessna_188, piper_pa36}.}
+\end{tabularx}
+\end{table}
+
+Observa-se que a faixa apresenta dois subgrupos identificáveis: as \textbf{aeronaves de 1{,}0--1{,}5 t}, predominantemente equipadas com motores Lycoming O-540 de \SI{235}{HP} a \SI{260}{HP} ou Continental IO-520 de \SI{300}{HP}, e as \textbf{aeronaves de 1{,}5--2{,}5 t}, equipadas com Lycoming IO-540 (\SI{300}{HP}) ou IO-720 (\SI{375}{HP} a \SI{400}{HP}).
 
 \subsection{O Envelope Operacional Agrícola}
 O envelope operacional agrícola impõe exigências específicas sobre a engenharia aeronáutica da plataforma:
 
 \begin{itemize}
-    \item \textbf{Ciclos de Carga e Dinâmica de Voo:} A operação caracteriza-se por ciclos de carga mecânica e térmica elevados. A aplicação envolve voos a baixa altitude sobre a cultura, exigindo resposta rápida do motor (\textit{throttle response}) para manobras de retorno e evasão de obstáculos imprevistos. Em aeronaves de Classe IV, esses ciclos são agravados pela inércia rotacional do conjunto motopropulsor (\textit{spool-up} de turbinas e momento de inércia de hélices de grande diâmetro).
+    \item \textbf{Ciclos de Carga e Dinâmica de Voo:} A operação caracteriza-se por ciclos de carga mecânica e térmica elevados. A aplicação envolve voos a baixa altitude sobre a cultura, exigindo resposta rápida do motor (\textit{throttle response}) para manobras de retorno e evasão de obstáculos imprevistos. Em motores de pistão de grande cilindrada (6 ou 8 cilindros formato boxer), essa resposta é favorecida pela inércia rotacional reduzida quando comparada a turboélices, característica que justifica a permanência da arquitetura de pistão nessa faixa.
     
-    \item \textbf{Atmosfera Operacional:} As missões ocorrem em ambientes com alta concentração de material particulado em suspensão e vapores químicos provenientes dos defensivos. Essa condição exige índices de proteção IP (\textit{Ingress Protection}) elevados para os componentes eletrônicos, sistemas eficientes de filtragem de ar e, no caso de turbinas, filtros de partículas (\textit{inertial particle separators}) para proteção do compressor.
+    \item \textbf{Atmosfera Operacional:} As missões ocorrem em ambientes com alta concentração de material particulado em suspensão e vapores químicos provenientes dos defensivos. Essa condição exige índices de proteção IP (\textit{Ingress Protection}) elevados para os componentes eletrônicos, sistemas eficientes de filtragem de ar e selagem da cabine para casos em que é necessário pilotos (sistema característico do Ipanema e do AgWagon).
     
-    \item \textbf{Densidade de Altitude:} Operações no interior do Brasil frequentemente ocorrem em dias quentes e regiões de planalto, resultando em redução da densidade do ar ($\rho$). Esse fator afeta a sustentação aerodinâmica e a eficiência volumétrica dos motores de combustão interna. Para mitigar o risco de perda de desempenho, o dimensionamento do grupo motopropulsor deve prever margens de potência instalada superiores a 30\% em relação ao peso máximo de decolagem. Turboélices apresentam vantagem comparativa nesse cenário, conforme detalhado na seção \ref{sec:turboelice}.
+    \item \textbf{Densidade de Altitude:} Operações no interior do Brasil frequentemente ocorrem em dias quentes e regiões de planalto, resultando em redução da densidade do ar ($\rho$). Esse fator afeta a sustentação aerodinâmica e a eficiência volumétrica dos motores de combustão interna. Como regra prática estabelecida na literatura de desempenho aeronáutico, um motor naturalmente aspirado perde aproximadamente 3{,}5\% de potência a cada \SI{1000}{ft} de aumento na altitude-densidade \cite{cfisteph_density}, o que sustenta a recomendação de margem de potência instalada significativa em relação ao MTOW para garantir o desempenho na decolagem em pistas de planalto. A análise quantitativa do efeito da altitude sobre o desempenho será feita na seção \ref{sec:curvas_lycoming}, com base em dados do manual do fabricante.
     
-    \item \textbf{Variação de Massa e Centro de Gravidade:} Durante a fase de pulverização, o peso da aeronave decresce substancialmente à medida que a carga útil é ejetada, alterando a posição do centro de gravidade (CG) e a carga alar (\textit{wing loading}). No Ipanema EMB-202, a ejeção de até \SI{950}{L} de produto representa quase 53\% do MTOW, exigindo leis de controle de voo adaptativas e propulsão com faixa de operação elástica.
+    \item \textbf{Variação de Massa e Centro de Gravidade:} Durante a fase de pulverização, o peso da aeronave decresce substancialmente à medida que a carga útil é ejetada, alterando a posição do centro de gravidade (CG) e a carga alar (\textit{wing loading}). No Ipanema EMB-202, a ejeção de até \SI{950}{L} de produto representa proporção significativa do MTOW de \SI{1800}{kg} \cite{embraer202_wiki}; no Pawnee Brave 375, o hopper de aproximadamente \SI{1080}{L} (38 ft$^3$) representa proporção semelhante para o MTOW de \SI{2177}{kg} \cite{piper_pa36}.
 \end{itemize}   
 
-\section{Análise Comparativa de Vetores de Propulsão por Classe de MTOW}
+\section{Análise Comparativa de Motores na Faixa de Interesse}
 
-A escolha do vetor de propulsão é fortemente condicionada pela massa da plataforma. A Tabela \ref{tab:matriz_propulsao} sintetiza o panorama tecnológico atual, evidenciando o ponto de transição entre arquiteturas.
+A escolha do motor para aeronaves agrícolas tripuladas na faixa de 1 a 2{,}5 toneladas é fortemente condicionada pela carga útil pretendida, pela autonomia de missão e pelos requisitos de certificação. A Tabela \ref{tab:matriz_propulsao} sintetiza as três famílias dominantes de motores aeronáuticos de pistão certificados aplicáveis ao segmento.
 
 \begin{table}[H]
 \centering
-\caption{Matriz de Decisão Tecnológica: Vetor de Propulsão por Classe de MTOW}
+\caption{Famílias de Motores Aeronáuticos de Pistão para Aeronaves Agrícolas de 1 a 2{,}5 toneladas}
 \label{tab:matriz_propulsao}
 \footnotesize
-\begin{tabularx}{\textwidth}{@{} l l X X @{}}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{} 
+    >{\hsize=0.8\hsize\raggedright\arraybackslash}X 
+    >{\hsize=0.9\hsize\raggedright\arraybackslash}X 
+    c 
+    >{\hsize=1.3\hsize\raggedright\arraybackslash}X 
+    @{}}
 \toprule
-\textbf{Classe (MTOW)} & \textbf{Propulsão Dominante} & \textbf{Justificativa Técnica} & \textbf{Exemplo de Plataforma} \\ \midrule
-Heavy ($\leq$\SI{150}{kg}) & 2T Boxer / BLDC & Alta relação potência/peso; tolerância a SFC elevado por curta autonomia. & DLE-120, DA-100L \\
+\textbf{Família} & \textbf{Configuração} & \textbf{Faixa de Potência} & \textbf{Aplicação Típica (MTOW)} \\ \midrule
+Lycoming O-540 / IO-540 & 6 cil. boxer, 8{,}9 L (541{,}5 in$^3$) & 235--\SI{350}{HP} & PA-25 Pawnee (1{,}3 t), Ipanema (1{,}5--1{,}8 t), Brave 300 (2{,}0 t) \\
 \addlinespace
-Super Heavy ($\leq$\SI{600}{kg}) & 4T Boxer / Híbrido & Maior TBO; melhor BSFC para missões de longo alcance. & Hirth 4202, Rotax 912 iS \\
+Continental IO-520 / TSIO-520 & 6 cil. boxer, 8{,}5 L (520 in$^3$) & 285--\SI{310}{HP} & Cessna 188 AgWagon/AgTruck/AgHusky (1{,}5--2{,}0 t) \\
 \addlinespace
-Classe IV ($>$\SI{1000}{kg}) & 4T Aero-Pistão / Turboélice & Confiabilidade certificada; densidade de potência adequada; TBO de 1.800 a 8.000 h. & Lycoming IO-540, P\&W PT6A \\ \bottomrule
+Lycoming IO-720 & 8 cil. boxer, 11{,}8 L (722 in$^3$) & \SI{400}{HP} & PA-36 Brave 375/400 (2{,}2 t) \\ \bottomrule
+\multicolumn{4}{l}{\footnotesize Dados consolidados a partir de \cite{lycomingmanual, io360manual, lycoming_io720}.}
 \end{tabularx}
 \end{table}
 
 \section{Análise de Motores de Combustão Interna (ICE)}
 
-Considerando o atual estado da arte do armazenamento eletroquímico de energia, os Motores de Combustão Interna (ICE - \textit{Internal Combustion Engines}) mantêm-se como a principal fonte motriz em aeronaves agrícolas. Essa predominância baseia-se na densidade energética específica dos combustíveis hidrocarbonetos (aproximadamente \SI{12000}{Wh/kg}), que supera os sistemas de baterias Li-Po/Li-Ion (faixa de 250 a \SI{300}{Wh/kg}). Para aeronaves de Classe IV, com MTOW superior a \SI{1000}{kg}, a propulsão a combustão é praticamente compulsória, dada a impossibilidade prática de embarcar a quantidade de baterias necessária sem comprometer a carga útil agroquímica.
+Considerando o atual estado da arte do armazenamento eletroquímico de energia, os Motores de Combustão Interna (ICE - \textit{Internal Combustion Engines}) permanecem como a alternativa tecnicamente mais madura e operacionalmente viável para aeronaves agrícolas tripuladas na faixa de 1 a 2{,}5 toneladas. Essa predominância baseia-se na densidade energética específica dos combustíveis hidrocarbonetos, da ordem de \SI{12000}{Wh/kg} para o querosene de aviação \cite{battery_aviation_review, aerospace_america_batteries}, que supera as melhores baterias de íon-lítio comercialmente disponíveis (densidade típica de até \SI{330}{Wh/kg}) e mesmo baterias avançadas em estado sólido (até \SI{400}{Wh/kg}) \cite{battery_aviation_review} por mais de uma ordem de grandeza, \autoeval{tornando o vetor puramente elétrico inviável para missões de pulverização agrícola que demandam autonomia mínima de 2 horas com cargas úteis de \SI{500}{kg} a \SI{1000}{kg}}.
+
 
 \subsection{Parâmetros Termodinâmicos e de Avaliação de Desempenho}
 Para o dimensionamento da planta motriz, utiliza-se a Pressão Média Efetiva ao Freio (BMEP - \textit{Brake Mean Effective Pressure}) como métrica de otimização volumétrica e mecânica. A BMEP quantifica o trabalho efetuado pelo motor por ciclo, permitindo a comparação da eficiência volumétrica e mecânica independentemente da cilindrada \cite{heywood1988}. 
 
 A autonomia (\textit{Endurance}) é avaliada pelo Consumo Específico de Combustível ao Freio (BSFC), que relaciona a vazão mássica de combustível consumida com a potência gerada, sendo a métrica principal para o dimensionamento do alcance de voo \cite{elsayed2016}. Adicionalmente, a Eficiência Térmica ao Freio (BTE) determina a capacidade do sistema em converter a energia química do combustível em trabalho mecânico útil. Para motores aeronáuticos de pistão refrigerados a ar, como a família Lycoming O-540, o BSFC em regime de cruzeiro situa-se na faixa de \SI{0.48}{lb/(hp \cdot h)} (aproximadamente \SI{292}{g/(kW \cdot h)}), valor próximo ao de turboélices modernos em regime otimizado \cite{lycomingmanual}.
 
-\subsection{Motores de Ciclo Otto de 2 Tempos (2T) --- Referencial das Classes Inferiores}
-Os motores de ciclo Otto operando em 2T são o padrão na indústria para VANTs na faixa de \SI{25}{kg} a \SI{120}{kg}. Sua análise é mantida neste trabalho como referencial comparativo, ilustrando o ponto de ruptura tecnológica para plataformas maiores.
+\subsection{Arquitetura Boxer Horizontalmente Oposta: A Convergência da Faixa}
 
-\subsubsection{Arquitetura Mecânica e Dinâmica}
+Os três principais motores aplicáveis à faixa de 1 a 2{,}5 t (Lycoming O-540, Continental IO-520 e Lycoming IO-720) compartilham a mesma arquitetura fundamental: pistões dispostos em configuração horizontalmente oposta (boxer), operando em ciclo Otto de 4 tempos, refrigeração a ar por aletas e acionamento direto da hélice (\textit{direct drive}). Essa convergência tecnológica é consequência de requisitos de engenharia compartilhados:
+
 \begin{itemize}
-    \item \textbf{Processo de Lavagem (\textit{Scavenging}):} O ciclo 2T integra exaustão e admissão, gerando um pulso de torque a cada rotação do virabrequim. Isso proporciona uma elevada relação potência-peso. A principal desvantagem é o aumento do consumo específico (SFC), devido à perda parcial de combustível fresco pelo duto de exaustão. Em aeronaves de Classe IV, esse desperdício torna o ciclo 2T inviável economicamente.
-    \item \textbf{Configuração Boxer (\textit{Flat-Twin}):} Para atenuar os elevados níveis de vibração característicos de motores monocilíndricos, adota-se o arranjo Boxer. O balanço harmônico dessa arquitetura reduz as vibrações sistêmicas, protegendo a estrutura da aeronave e a aviônica.
-    \item \textbf{Sistemas de Admissão:} O uso de válvulas de palheta (\textit{reed valves}) restringe a inversão do fluxo na admissão, mantendo a saturação da mistura e melhorando o torque em rotações parciais.
+    \item \textbf{Balanço Harmônico:} A disposição boxer permite o cancelamento dos momentos de inércia primários de primeira e segunda ordem, reduzindo vibrações transmitidas à estrutura e à aviônica embarcada. Esse aspecto é particularmente crítico em aplicações agrícolas, dada a fadiga estrutural acumulada por ciclos repetitivos de carga.
+    \item \textbf{Refrigeração a Ar:} A ausência de circuito de líquido refrigerante simplifica a manutenção em campo, condizente com a operação descentralizada da aviação agrícola, em pistas rurais. Exige, contudo, defletores (\textit{engine baffling}) cuidadosamente dimensionados para garantir uniformidade térmica entre cilindros \cite{lycomingmanual, io360manual}.
+    \item \textbf{Direct Drive:} O acoplamento direto entre virabrequim e hélice elimina a complexidade de uma caixa redutora, reduzindo peso, custo e modos de falha. A consequência é a operação do motor em faixa de RPM compatível com o regime aerodinâmico ótimo da hélice, tipicamente entre 2.400 e 2.700 RPM para os motores aeronáuticos das famílias O-540, IO-540 e IO-720 \cite{lycomingmanual, lycoming_io720}.
+    \item \textbf{Eficiência Volumétrica e Consumo:} A separação mecânica das fases de admissão e exaustão via válvulas comandadas por tuchos hidráulicos maximiza o aproveitamento térmico, com BSFC em regime de cruzeiro entre 280 e \SI{350}{g/(kW \cdot h)} \cite{lycomingmanual, io360manual}.
+    \item \textbf{Confiabilidade Certificada:} O Intervalo Entre Revisões Gerais (TBO) recomendado pelos fabricantes para a família é de 1.500 a 2.000 horas em serviço intermitente \cite{lycomingmanual}, valor adequado ao perfil de utilização típico de aeronaves agrícolas, considerando-se as características sazonais das safras e o uso intensivo durante a janela operacional \autoeval{(estimativa do autor: 200 a 400 h/ano em safra plena)}.
 \end{itemize}
 
-\subsubsection{Gerenciamento Térmico e Lubrificação}
-Motores 2T operam predominantemente com arrefecimento a ar por aletas. Voos agrícolas de baixa velocidade e alta rotação reduzem a transferência de calor convectiva. Para contornar essa limitação, exige-se o uso de defletores (\textit{engine baffling}) na carenagem para direcionar o fluxo de ar adequadamente aos cilindros. Falhas no arrefecimento podem comprometer a lubrificação (sistema pré-mix), levando a danos severos nos pistões ou gripagem dos anéis.
+\subsection{Injeção de Combustível em Motores Aeronáuticos: Mecânica vs. Eletrônica}
 
-\subsection{Motores de Ciclo Otto de 4 Tempos (4T)}
-Para plataformas superpesadas (MTOW > \SI{150}{kg}) e missões de longo alcance, a arquitetura 4T torna-se mais viável economicamente. Na Classe IV, o 4T é a única arquitetura de pistão aceitável, dada a necessidade de alto TBO e compatibilidade com combustíveis aeronáuticos certificados.
+Os motores aeronáuticos certificados da faixa de interesse adotam, em sua quase totalidade, sistemas de injeção mecânica contínua (IO --- \textit{Injected Opposed}). A injeção mecânica utiliza um servorregulador (tipicamente Bendix RSA-5AD1 ou RSA-10ED1) que mede a vazão de ar pela admissão e dosa proporcionalmente o combustível a bicos posicionados próximos às válvulas de admissão de cada cilindro \cite{io360manual}.
 
-\subsubsection{Eficiência Volumétrica e Consumo}
+Comparada à carburação convencional, a injeção mecânica oferece vantagens importantes:
+
 \begin{itemize}
-    \item \textbf{Eficiência no Consumo (BSFC):} A separação mecânica das fases de admissão e exaustão via válvulas maximiza o aproveitamento térmico. Isso reduz o consumo específico para faixas otimizadas de 280 a \SI{350}{g/kWh}.
-    \item \textbf{Confiabilidade e Robustez:} A configuração 4T apresenta maior robustez operacional, refletindo em um Intervalo Entre Revisões Gerais (TBO) de 1.000 a 2.000 horas em serviço intermitente para motores aeronáuticos de pistão certificados, podendo atingir 8.000 horas para turboélices da família PT6A com manutenção modular.
+    \item Imunidade ao \textit{carburetor icing} em condições de baixa temperatura e alta umidade.
+    \item Distribuição mais uniforme da mistura entre cilindros, reduzindo gradientes de temperatura.
+    \item Permite voo em atitudes negativas momentâneas (especialmente importante em manobras agrícolas evasivas).
+    \item Resposta rápida do motor em transientes de potência (\textit{throttle response}), crítica em pulverização de baixa altitude.
 \end{itemize}
 
-\subsection{Injeção Eletrônica (EFI) vs. Carburação}
-A limitação adaptativa dos sistemas carburados em lidar com variações barométricas exige a sua substituição por sistemas eletrônicos em operações profissionais. Um motor carburado calibrado ao nível do mar apresenta queda de rendimento em altitudes elevadas devido à menor densidade do ar.
+A migração para sistemas eletrônicos de injeção e ignição (FADEC --- \textit{Full Authority Digital Engine Control}) é uma tendência emergente, exemplificada pela linha Lycoming iE2, que oferece controle eletrônico integral com sensores MAP (\textit{Manifold Absolute Pressure}) e IAT (\textit{Intake Air Temperature}). O FADEC ajusta automaticamente a razão estequiométrica da mistura combustível e ar, ângulo de ignição (pré-ignição) e mistura para densidade local do ar, eliminando a necessidade de ajuste manual de mistura pelo piloto. Para operações em densidade de altitude variável (planaltos brasileiros, com elevações de \SI{600}{m} a \SI{1100}{m}), essa correção automática representa ganho mensurável de eficiência operacional que provém de fundamentos de regimes de trabalho do motor: regime pobre, regime economico e regime rico (alto desempenho).
 
-A Injeção Eletrônica de Combustível (EFI) processa dados de sensores estáticos, como o MAP (\textit{Manifold Absolute Pressure}) e o IAT (\textit{Intake Air Temperature}), em tempo real, ajustando os pulsos de injeção para manter a razão estequiométrica adequada frente às flutuações atmosféricas. Em motores aeronáuticos da família IO-540 (sufixo "IO" denota \textit{Injected Opposed}), a injeção mecânica contínua de combustível é o padrão; sistemas FADEC (\textit{Full Authority Digital Engine Control}) começam a ser introduzidos em variantes mais modernas, como a Lycoming iE2.
 
-\subsection{Especificações Comerciais de Motores a Combustão}
 
-A viabilização técnica requer a análise de equipamentos comerciais (\textit{COTS - Commercial Off-The-Shelf}). A Tabela \ref{tab:motores_ice} sumariza propulsores frequentemente integrados em VANTs de asa fixa das classes Heavy e Super Heavy. A Tabela \ref{tab:motores_classe4}, por sua vez, apresenta o panorama da Classe IV, foco principal deste trabalho.
-
-\begin{table}[H]
-\centering
-\caption{Perfil Comparativo de Motores de Combustão Interna para VANTs Pesados (Referencial)}
-\label{tab:motores_ice}
-\small
-\begin{tabularx}{\textwidth}{@{}llccX@{}}
-\toprule
-\textbf{Modelo \& Arq.} & \textbf{Potência} & \textbf{Peso*} & \textbf{BSFC}  \\ \midrule
-\textbf{Desert Aircraft DA-100L}\newline 2T Boxer (100cc) & \SI{9.8}{HP} & \SI{2.53}{kg}  \\
-\textbf{Inf-Inject DA-100 EFI}\newline 2T Boxer (100cc) & $\sim$\SI{10}{HP} & \SI{2.95}{kg} & +65\% Efi.  \\
-\textbf{DLE-120 EFI}\newline 2T Boxer (120cc) & \SI{12.0}{HP} & \SI{3.08}{kg} & - & \\
-\textbf{Hirth 4103}\newline 2T Boxer (100cc) & \SI{8.0}{HP} & \SI{3.40}{kg} & 440-517 g/kWh  \\
-\textbf{Hirth 4202 HF}\newline 2T Boxer (180cc) & $\sim$\SI{12.7}{HP} & \SI{9.30}{kg} & 400-701 g/kWh  \\
-\textbf{Saito FG-100TS}\newline 4T Boxer (100.3cc) & $\sim$7-\SI{8}{HP} & \SI{4.04}{kg} & Alta efi.  \\
-\textbf{Rotax 912 iS Sport}\newline 4T Boxer (1352cc) & \SI{100}{HP} & \SI{63.6}{kg} & 285 g/kWh &  \\ \bottomrule
-\multicolumn{5}{l}{\footnotesize Compilação do autor a partir de \cite{da100l, infinject, dle120, hirth4103, hirth4202, rotax912}.}
-\end{tabularx}
-\end{table}
-
-\section{Aeronaves Agrícolas de Grande Porte (MTOW > 1000 kg): O Foco Principal}
+\section{Detalhamento das Aeronaves Agrícolas de Grande Porte}
 \label{sec:classe4}
 
-A análise dos motores de pequeno porte das seções anteriores estabelece o referencial técnico necessário. Contudo, ao se considerar plataformas como o AGRO-VANT em sua configuração de máxima capacidade operacional, a comparação relevante deixa de ser entre motores 2T e 4T de pequena cilindrada e passa a englobar motores aeronáuticos certificados de grande deslocamento volumétrico e turboélices.
-
-\subsection{O Paradigma Aero-Pistão: A Família Lycoming O-540 e o Caso Ipanema}
+\subsection{A Família Lycoming O-540 e o Ipanema}
 
 A aeronave agrícola de referência no Brasil é o Embraer/Neiva EMB-202 Ipanema, com mais de \num{1700} unidades entregues e participação de mercado próxima a 80\% da frota brasileira de pulverização aérea \cite{embraer202}. Suas especificações técnicas servem como \textit{benchmark} para qualquer plataforma de Classe IV nacional.
 
@@ -170,121 +195,145 @@ A família Lycoming O-540 / IO-540, certificada pela FAA sob o \textit{Type Cert
 
 \subsubsection{O Caso do Etanol Aeronáutico}
 
-Uma particularidade altamente relevante para o cenário brasileiro é a certificação do EMB-202A, a primeira aeronave de série do mundo a operar com motor a etanol \cite{embraer202}. A conversão é regulamentada pela ANAC por meio da Instrução Suplementar IS 137.201-001E, que exige a emissão de uma Autorização Especial de Voo (AEV) sob a Subparte 21.175 do RBAC 21 \cite{anacis137}. O etanol oferece vantagens econômicas significativas em relação à AvGas 100LL, além de eliminar o uso de chumbo tetraetila, mas demanda modificações no sistema de injeção e nos materiais da linha de combustível devido à sua agressividade química e maior consumo volumétrico (densidade energética cerca de 33\% inferior à da gasolina).
+Uma particularidade altamente relevante para o cenário brasileiro é a certificação do EMB-202A, a primeira aeronave de série do mundo a operar com motor a etanol \cite{embraer202}. A conversão é regulamentada pela ANAC por meio da Instrução Suplementar IS 137.201-001E, que exige a emissão de uma Autorização Especial de Voo (AEV). O etanol oferece vantagens econômicas significativas em relação à AvGas 100LL, além de eliminar o uso de chumbo tetraetila (metal pesado tóxico), mas demanda modificações no sistema de injeção e nos materiais da linha de combustível devido à sua agressividade química e menor densidade energética. O etanol apresenta cerca de 69\% da energia volumétrica do JP8 (querosene aeronáutico) \cite{nas_army_fuels}, o que implica em maior consumo volumétrico para entregar a mesma energia ao motor.
 
-\subsection{O Paradigma Turboélice: A Família Pratt \& Whitney PT6A}
-\label{sec:turboelice}
+\subsection{Análise Quantitativa das Curvas Lycoming IO-360}
+\label{sec:curvas_lycoming}
 
-Para aeronaves agrícolas acima de \SI{4000}{kg} de MTOW, o motor de pistão deixa de ser competitivo devido a limitações de densidade de potência e robustez operacional. Nessa faixa, a família Pratt \& Whitney Canada PT6A é o padrão da indústria, sendo utilizada em praticamente toda a linha Air Tractor (do AT-502 ao AT-802) e na Thrush Aircraft \cite{airtractor802, airtractor502}.
+A documentação técnica dos motores Lycoming fornece dados quantitativos detalhados em duas curvas fundamentais que se aplicam, com adaptações de escala, a toda a família de motores boxer da marca: a curva de Consumo de Combustível em Carga Parcial (\textit{Part Throttle Fuel Consumption}) e a curva de Desempenho ao Nível do Mar e em Altitude (\textit{Sea Level and Altitude Performance}). A análise a seguir toma como referência metodológica as Figuras 3-5 e 3-21 do manual oficial do IO-360 \cite{io360manual}, o motor de 200 HP que, embora não seja diretamente empregado em aeronaves agrícolas da faixa de interesse, compartilha a mesma família construtiva e curvas funcionalmente equivalentes (escalonadas para o número de cilindros e cilindrada) com os motores O-540/IO-540 e IO-720, dominantes na faixa de 1 a 2{,}5 t. \autoeval{Essa metodologia foi adotada por restrição de acesso público à edição equivalente do manual da série O-540 (curvas detalhadas de Part Throttle e altitude/performance individuais por sufixo de motor).}
 
-\subsubsection{Vantagens Comparativas do Turboélice}
+\subsubsection{Curva de Consumo de Combustível em Carga Parcial}
 
-\begin{itemize}
-    \item \textbf{Densidade de Potência:} O PT6A-67AG do AT-802 desenvolve \SI{1350}{shp} (\SI{1010}{kW}) com peso seco inferior a \SI{300}{kg}, contra os \SI{200}{kg} do IO-540 para apenas \SI{320}{HP} \cite{airtractor802}. A relação potência/peso é cerca de 3 vezes superior.
-    \item \textbf{TBO Estendido:} O PT6A-140AG, instalado no AT-502XP, atinge TBO de até 8.000 horas ou 12 anos, contra 1.500--2.000 horas dos motores de pistão \cite{covingtonpt6, pwcpt6a}.
-    \item \textbf{Confiabilidade em Hot-and-High:} O PT6A-140AG mantém potência máxima de decolagem com carga total a temperaturas de até \SI{44}{\degreeCelsius} (\SI{111}{\degree F}), eliminando a derretida (\textit{derating}) que afeta motores de pistão refrigerados a ar nas operações brasileiras de planalto \cite{covingtonpt6}.
-    \item \textbf{Tolerância a Combustíveis:} A família PT6A possui aprovações para queima de diesel S10 e S500, biodiesel B10 e querosene de aviação (Jet-A1), expandindo a logística operacional \cite{covingtonpt6}.
-    \item \textbf{BSFC Competitivo:} O PT6A-140AG apresenta SFC 5\% inferior aos seus concorrentes diretos da mesma classe \cite{covingtonpt6}.
-\end{itemize}
+A curva de consumo de combustível em carga parcial relaciona, para diferentes regimes de RPM (1800 a 2700 RPM), o consumo em libras por hora (lb/h) com a potência efetiva entregue ao freio (\textit{Actual Brake Horsepower}). 
 
-\subsubsection{Desvantagens e Limitações}
+\textbf{COLOCAR OS GRAFICOS AQUI}
+
+O gráfico apresenta duas famílias de curvas:
 
 \begin{itemize}
-    \item \textbf{Custo de Aquisição:} Um motor PT6A novo custa entre US\$ 500 mil e US\$ 1 milhão, contra cerca de US\$ 60--80 mil de um IO-540 fabricado novo.
-    \item \textbf{Custos de Manutenção:} Apesar do TBO maior, a revisão de seção quente (\textit{hot section inspection}) a cada 1.200 horas custa em torno de US\$ 4.000, valor compensador no longo prazo, mas que exige planejamento de capital.
-    \item \textbf{Resposta de Aceleração (\textit{Spool-Up}):} A inércia do compressor introduz latência na resposta de potência, mitigada parcialmente pela operação contínua em regime de marcha lenta de voo (\textit{flight idle}).
+    \item \textbf{Mistura de Melhor Potência (\textit{Best Power}):} Razão ar/combustível ligeiramente rica (em torno de 12{,}5:1), maximizando o torque entregue. Adequada às fases de decolagem, ganho de altitude e manobras de retorno em pulverização agrícola.
+    \item \textbf{Mistura de Melhor Economia (\textit{Best Economy}):} Razão ar/combustível próxima à estequiométrica (cerca de 14{,}7:1) ou ligeiramente pobre. Adequada ao cruzeiro e a deslocamentos, reduzindo o consumo específico em até 15\%.
 \end{itemize}
 
-\subsection{Comparativo Direto: Motores Aeronáuticos para Classe IV}
+Para o IO-360 (200 HP), os dados extraídos da curva indicam consumo de aproximadamente \SI{85}{lb/h} a \SI{170}{HP} (75\% da potência nominal, regime de cruzeiro típico) em mistura \textit{best power}, e \SI{75}{lb/h} no mesmo regime em mistura \textit{best economy}. Esses valores correspondem a um BSFC de aproximadamente \SI{0.50}{lb/(hp \cdot h)} e \SI{0.44}{lb/(hp \cdot h)} respectivamente, equivalentes a \SI{304}{g/(kW \cdot h)} e \SI{268}{g/(kW \cdot h)} \cite{io360manual}.
+
+\textbf{Extrapolação para a Família O-540 / IO-540 / IO-720:} A topologia da curva é estruturalmente idêntica para os demais motores da família, com o eixo de potência reescalado. Para o IO-540-K1J5 (320 HP do Ipanema EMB-202A), o consumo em cruzeiro a 75\% (\SI{240}{HP}) situa-se em \SI{130}{lb/h} em \textit{best power} e \SI{115}{lb/h} em \textit{best economy}; para o IO-720-D1CD (400 HP do Pawnee Brave 375), os valores escalam a aproximadamente \SI{170}{lb/h} e \SI{150}{lb/h} respectivamente \cite{lycomingmanual, lycoming_io720}.
+
+\subsubsection{Curva de Desempenho ao Nível do Mar e em Altitude (Figura 3-21 do Manual)}
+
+A segunda curva crítica relaciona a potência disponível com a altitude pressão (em milhares de pés) e a pressão de admissão (\textit{Manifold Pressure}, em polegadas de mercúrio). 
+
+\textbf{COLOCAR OS GRAFICOS AQUI}
+
+O gráfico é dividido em duas regiões:
+
+\begin{itemize}
+    \item \textbf{Quadrante Inferior --- Desempenho ao Nível do Mar:} Mostra a potência ao freio em função da pressão de admissão (variável de \SI{18}{inHg} a \SI{29}{inHg}) e do RPM. Define o envelope operacional em decolagem.
+    \item \textbf{Quadrante Superior --- Desempenho em Altitude:} Mostra a perda de potência à medida que a altitude pressão aumenta (de 0 a \SI{24000}{ft}). Para um motor naturalmente aspirado (sem turbocompressor), a perda é aproximadamente linear com a densidade do ar, atingindo cerca de 75\% da potência nominal a \SI{8000}{ft} (\SI{2440}{m}) e 60\% a \SI{14000}{ft} (\SI{4270}{m}) \cite{io360manual}.
+\end{itemize}
+
+\textbf{Implicação para operações brasileiras:} Pistas agrícolas localizadas em planaltos (Goiás, Distrito Federal, sul de Minas Gerais, oeste da Bahia) frequentemente situam-se entre \SI{800}{m} e \SI{1200}{m} de elevação, com temperaturas operacionais entre \SI{30}{\degreeCelsius} e \SI{38}{\degreeCelsius} no auge da safra. Aplicando a regra prática de que motores aeronáuticos naturalmente aspirados perdem aproximadamente 3{,}5\% da potência por \SI{1000}{ft} de altitude-densidade \cite{cfisteph_density}, e considerando que dias quentes em pistas de planalto podem elevar a altitude-densidade para a faixa de \SI{4000}{ft} a \SI{8000}{ft} (cerca de \SI{1200}{m} a \SI{2400}{m}), a redução resultante de potência situa-se na faixa de aproximadamente 14\% a 28\%. Essa perda justifica a especificação de margens de potência instalada generosas sobre o MTOW e explica a opção do Cessna AgHusky pelo motor turbocompressor TSIO-520-T, a única variante que utiliza turbocompressão na faixa estudada \cite{cessna_188}.
+
+\subsection{Especificações Comparativas}
+
+A Tabela \ref{tab:motores_faixa} apresenta o perfil técnico consolidado dos motores das familias certificadas aplicáveis às plataformas de referência identificadas na Tabela \ref{tab:plataformas_referencia}.
 
 \begin{table}[H]
 \centering
-\caption{Perfil Comparativo de Motores para Aeronaves Agrícolas de Grande Porte (Classe IV)}
-\label{tab:motores_classe4}
+\caption{Perfil Comparativo de Motores Aeronáuticos de Pistão para Aeronaves Agrícolas de 1 a 2{,}5 toneladas}
+\label{tab:motores_faixa}
 \footnotesize
-\begin{tabularx}{\textwidth}{@{} l c c c c X @{}}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{} 
+    >{\hsize=1.0\hsize\raggedright\arraybackslash}X 
+    c 
+    >{\hsize=0.8\hsize\raggedright\arraybackslash}X 
+    c 
+    c 
+    >{\hsize=1.2\hsize\raggedright\arraybackslash}X 
+    @{}}
 \toprule
-\textbf{Modelo} & \textbf{Tipo} & \textbf{Potência} & \textbf{Peso Seco} & \textbf{TBO} & \textbf{Aplicação Típica} \\ \midrule
-Lycoming IO-540-K1J5 & 4T Boxer 6 cil. (8{,}9 L) & \SI{320}{HP} & $\sim$\SI{200}{kg} & \SI{1500}{h} & EMB-202 Ipanema (MTOW \SI{1800}{kg}) \\
+\textbf{Modelo} & \textbf{Cil. / Desloc.} & \textbf{Potência} & \textbf{Peso Seco} & \textbf{TBO} & \textbf{Aplicação Típica (MTOW)} \\ \midrule
+Lycoming O-540-B2B5 & 6 / 8{,}9 L & \SI{235}{HP} @ 2575 RPM & $\sim$\SI{179}{kg} & \SI{2000}{h} & PA-25 Pawnee B (1{,}3 t) \\
 \addlinespace
-P\&W PT6A-140AG & Turboélice & \SI{867}{shp} & $\sim$\SI{180}{kg} & até \SI{8000}{h} & AT-502XP (MTOW \SI{4175}{kg}) \\
+Lycoming O-540-E4B5 & 6 / 8{,}9 L & \SI{260}{HP} @ 2700 RPM & $\sim$\SI{181}{kg} & \SI{2000}{h} & PA-25 Pawnee C/D (1{,}3 t) \\
 \addlinespace
-P\&W PT6A-60AG & Turboélice & \SI{1050}{shp} & $\sim$\SI{230}{kg} & 3.500--\SI{6000}{h} & AT-602 (MTOW \SI{5670}{kg}) \\
+Continental IO-520-D & 6 / 8{,}5 L & \SI{300}{HP} @ 2850 RPM & $\sim$\SI{208}{kg} & \SI{1700}{h} & Cessna 188 AgWagon/AgTruck (1{,}5--2{,}0 t) \\
 \addlinespace
-P\&W PT6A-67AG & Turboélice & \SI{1350}{shp} & $\sim$\SI{270}{kg} & 3.500--\SI{6000}{h} & AT-802 (MTOW \SI{7257}{kg}) \\
+Continental TSIO-520-T & 6 / 8{,}5 L (turbo) & \SI{310}{HP} @ 2700 RPM & $\sim$\SI{216}{kg} & \SI{1400}{h} & Cessna AgHusky (2{,}0 t) \\
 \addlinespace
-P\&W PT6A-67F & Turboélice & \SI{1600}{shp} & $\sim$\SI{280}{kg} & \SI{3600}{h} & AT-802AF (combate a incêndio) \\ \bottomrule
-\multicolumn{6}{l}{\footnotesize Compilação do autor a partir de \cite{pwcpt6a, lycomingmanual, embraer202, airtractor802, airtractor502, covingtonpt6}.}
+Lycoming IO-540-K1D5 / K1G5 / K1J5 & 6 / 8{,}9 L & \SI{300}{HP}/\SI{320}{HP} @ 2700 RPM & $\sim$\SI{200}{kg} & \SI{2000}{h} & Ipanema 201/202 (1{,}5--1{,}8 t), Brave 300 (2{,}0 t) \\
+\addlinespace
+Lycoming IO-720-D1CD & 8 / 11{,}8 L & \SI{375}{HP}--\SI{400}{HP} @ 2650 RPM & $\sim$\SI{253}{kg} & 1.800--\SI{2000}{h} & PA-36 Brave 375/400 (2{,}2 t) \\ \bottomrule
+\multicolumn{6}{l}{\footnotesize Compilação do autor a partir de \cite{lycomingmanual, io360manual, lycoming_io720, continental_io520, embraer202, piper_pa25, cessna_188, piper_pa36}.}
 \end{tabularx}
 \end{table}
 
-\section{Hibridização e Eletrificação: Viabilidade na Classe IV}
+Da Tabela \ref{tab:motores_faixa} é possível inferir três observações relevantes para o projeto AGRO-VANT:
 
-A demanda por sistemas de menor impacto ambiental e manutenção simplificada impulsionou o desenvolvimento de plataformas puramente elétricas e híbridas. Cabe avaliar a aplicabilidade dessas tecnologias na Classe IV, onde a massa absoluta da plataforma altera radicalmente os balanços energéticos.
+\begin{enumerate}
+    \item \textbf{Densidade de potência:} A razão potência/peso seco varia de aproximadamente 1{,}3 HP/kg (O-540-B2B5) a 1{,}6 HP/kg (IO-540-K1J5 e IO-720), com pouca variação dentro da faixa.
+    \item \textbf{TBO competitivo:} Todos os motores apresentam TBO igual ou superior a \SI{1700}{h}, com a maior parte da família Lycoming O-540 atingindo \SI{2000}{h} \cite{lycomingmanual}. \autoeval{Cálculo do autor: a uma utilização média anual estimada em 300 h/ano (consistente com a janela operacional sazonal típica de safra brasileira), esse TBO equivale a aproximadamente 6{,}5 anos de operação entre revisões gerais.}
+    \item \textbf{Convergência no IO-540:} A família Lycoming IO-540 cobre praticamente toda a faixa central (1{,}3--2{,}0 t) com variantes do mesmo motor base, oferecendo cadeia logística unificada e disponibilidade de peças. Esse fato sustenta a recomendação do IO-540 como motor de referência para o AGRO-VANT em sua configuração-alvo.
+\end{enumerate}
 
-\subsection{Vetor de Tração Puramente Elétrico: Inviabilidade na Classe IV}
-Os sistemas elétricos apresentam alta eficiência na conversão de energia. Os motores BLDC (\textit{Brushless Direct Current}) listados na Tabela \ref{tab:motores_eletricos} são representativos do estado da arte para VANTs de carga extrema das classes Heavy.
+\section{Avaliação de Vetores Alternativos: Tração Elétrica e Hibridização}
 
-\begin{table}[H]
-\centering
-\caption{Referenciais de Propulsores Elétricos para Carga Extrema (T-Motor) --- Referencial}
-\label{tab:motores_eletricos}
-\small
-\begin{tabularx}{\textwidth}{@{}lXllcc@{}}
-\toprule
-\textbf{Modelo} & \textbf{KV} & \textbf{Voltagem} & \textbf{Peso} & \textbf{Empuxo Máx.} & \textbf{Potência Cont./Pico} \\ \midrule
-\textbf{T-Motor U13 II} & 65 & 22-25S ($\sim$100V) & \SI{975}{g} & \SI{28.7}{kg} & \SI{6720}{W}  \\
-\textbf{T-Motor U15 II} & 80 & 12-24S ($\sim$100V) & \SI{1740}{g} & \SI{36.5}{kg} & 8580 / \SI{9942}{W}  \\
-\textbf{T-Motor VL1035} & 150 & 14S ($\sim$50V) & - & \SI{36.1}{kg} & \SI{4000}{W} (cont.)  \\ \bottomrule
-\multicolumn{6}{l}{\footnotesize Compilação do autor a partir de \cite{vl1035, ligpower}.}
-\end{tabularx}
-\end{table}
+A demanda por sistemas de menor impacto ambiental impulsionou pesquisas em plataformas puramente elétricas e híbridas. Esta seção avalia a aplicabilidade dessas tecnologias à faixa de 1 a 2{,}5 toneladas, considerando o balanço energético e as restrições de carga útil agroquímica.
+
+\subsection{Tração Puramente Elétrica}
+
+A inviabilidade da tração puramente elétrica para aeronaves agrícolas de 1 a 2{,}5 t é demonstrada quantitativamente pelo balanço de massa de baterias. Tomando como caso de referência o IO-540-K1J5 do EMB-202 Ipanema (\SI{320}{HP} $\approx$ \SI{239}{kW}) operando por 2 horas em regime de cruzeiro a 75\% da potência nominal (\SI{179}{kW}), e adotando como densidade de energia da bateria os valores limítrofes da literatura: Li-Ion atual em torno de \SI{250}{Wh/kg} (próximo ao limite superior dos sistemas embarcados comercialmente disponíveis \cite{battery_aviation_review, aerospace_america_batteries}) e Li-S em desenvolvimento em torno de \SI{500}{Wh/kg} (limite teórico próximo da fronteira ainda não realizada comercialmente \cite{battery_aviation_review}), o cálculo conduzido pelo autor é o seguinte:
 
 \begin{itemize}
-    \item \textbf{Eficiência Energética e Motores BLDC:} Motores elétricos sem escovas (BLDC) atingem eficiências de 90\% a 95\%. Em comparação, motores de combustão operam na faixa de 25\% a 35\%.
-    \item \textbf{Controle por FOC (\textit{Field-Oriented Control}):} Essa modulação garante resposta dinâmica linear, reduzindo atrasos inerciais, oscilações e ruídos.
-    \item \textbf{Limitação Logística para Classe IV:} A inviabilidade da tração puramente elétrica em aeronaves de Classe IV é demonstrada quantitativamente: para gerar os \SI{320}{HP} (\SI{239}{kW}) do Ipanema durante 2 horas de missão (autonomia típica de cruzeiro), seriam necessários cerca de \SI{478}{kWh} de armazenamento. Com baterias Li-Ion de densidade energética de \SI{250}{Wh/kg}, isso corresponde a \SI{1912}{kg} apenas em baterias --- mais do que o MTOW total da aeronave. Mesmo com tecnologias emergentes (lítio-enxofre, estado sólido) atingindo \SI{500}{Wh/kg}, o peso seria de \SI{956}{kg}, ainda incompatível com a carga útil agroquímica necessária.
+    \item \textbf{Energia necessária:} $E = 179\,\si{kW} \times 2\,\si{h} = 358\,\si{kWh}$
+    \item \textbf{Massa de baterias Li-Ion (\SI{250}{Wh/kg}):} $m_{bat} = 358\,\si{kWh} / 0{,}25\,\si{kWh/kg} = 1432\,\si{kg}$
+    \item \textbf{Massa com tecnologia emergente Li-S (\SI{500}{Wh/kg}):} $m_{bat} = 716\,\si{kg}$
 \end{itemize}
 
-\subsection{Topologias das Arquiteturas Híbridas}
-Para contornar as limitações das baterias e aproveitar a eficiência dos motores elétricos, as arquiteturas híbridas apresentam-se como uma alternativa tecnológica viável, particularmente para a Classe IV em desenvolvimentos de próxima geração.
+Com MTOW de \SI{1800}{kg} e peso vazio aproximado de \SI{1100}{kg}, a margem disponível para carga útil + combustível + baterias é de cerca de \SI{700}{kg}. Mesmo no cenário otimista com baterias Li-S, a massa de baterias consumiria toda a margem operacional, eliminando totalmente a carga útil agroquímica. Para o Piper Brave 375 (\SI{400}{HP}, MTOW \SI{2177}{kg}), o cálculo resulta em valores ainda mais desfavoráveis.
+
+\subsection{Trações Híbridas}
+
+Diferentemente do vetor puramente elétrico, as arquiteturas híbridas merecem avaliação mais detalhada, dado que poderiam, em tese, reduzir o consumo de combustível e ampliar a redundância do sistema propulsivo.
 
 \subsubsection{Modelo Híbrido em Série}
-Nessa configuração, o motor a combustão atua exclusivamente como um gerador primário. 
+Nessa configuração, o motor a combustão atua exclusivamente como gerador, enquanto motores elétricos realizam a tração da hélice.
+
 \begin{itemize}
-    \item \textbf{Funcionamento:} O propulsor fornece energia para os Controladores Eletrônicos de Velocidade (ESC) ou para a recarga de baterias, operando em regime estacionário de RPM otimizado, enquanto motores elétricos realizam a tração.
-    \item \textbf{Aplicação e Desvantagens:} Essa topologia onera o peso da aeronave ao exigir o motor a combustão, o gerador e os motores elétricos de tração, resultando em um aumento de massa de 20\% a 40\%. O ganho marginal em economia de combustível (13\% a 24\%) reduz a atratividade do modelo para a Classe IV, onde o ganho de massa compromete diretamente a carga útil agroquímica.
+    \item \textbf{Funcionamento:} O propulsor de combustão fornece energia para os Controladores Eletrônicos de Velocidade (ESC) ou para a recarga de um banco de baterias intermediário, operando em regime estacionário de RPM otimizado.
+    \item \textbf{Aplicação e Desvantagens:} Essa topologia aumenta o peso da aeronave ao exigir o motor a combustão, o gerador e os motores elétricos de tração, resultando em um aumento de massa total. A literatura especializada indica ganhos de fuel burn na ordem de 12\% a 25\% em testes representativos, com o Diamond DA36 E-Star (configuração híbrida série) reportando até 25\% de redução em testes iniciais e 30\% em retrofits otimizados de aeronaves regionais \cite{wiki_hybrid_electric, sciencedirect_hybrid}. \autoeval{Para aeronaves agrícolas, esses ganhos marginais em economia de combustível tendem a ser superados pela perda de carga útil agroquímica decorrente do peso adicional do sistema híbrido, justificando o ceticismo do autor quanto à atratividade do modelo série para o segmento.}
 \end{itemize}
 
 \subsubsection{Modelo Híbrido Paralelo}
-A arquitetura paralela acopla mecanicamente o motor a combustão e o motor elétrico no mesmo eixo de tração.
+A arquitetura paralela acopla mecanicamente um motor a combustão e um motor elétrico ao mesmo eixo de tração da hélice.
 
 \begin{itemize}
-    \item \textbf{Auxílio Trativo e Regeneração:} O sistema atua de forma combinada. O motor elétrico auxilia em fases críticas (decolagem e ganho de altitude) e atua como gerador em regimes de cruzeiro, recarregando o banco de baterias por meio do excesso de potência mecânica do motor térmico.
-    \item \textbf{Vantagens e Eficiência:} A integração permite a redução no tamanho do banco de baterias, mitigando o acréscimo estrutural de peso (cerca de 8\% adicionais). A economia de combustível pode chegar a 50\% em comparação com sistemas puramente térmicos.
-    \item \textbf{Aplicabilidade na Classe IV:} Ainda em fase experimental para aeronaves agrícolas de grande porte. Programas como o magniX e o Ampaire EEL exploram retrofits híbridos em aeronaves leves, mas a certificação sob FAR 23 / RBAC 23 ainda não foi formalizada para uso agrícola. Recomenda-se como linha de desenvolvimento futuro do projeto NAPI.
+    \item \textbf{Auxílio Trativo e Regeneração:} O motor elétrico auxilia em momentos críticos (decolagem totalmente carregado, ganho de altitude) e pode atuar como gerador em regime de cruzeiro, recarregando o banco de baterias com o excesso de potência mecânica do ICE.
+    \item \textbf{Vantagens Potenciais:} A integração permite o uso de um motor a combustão menor (e mais leve) do que aquele que seria necessário para a decolagem isolada. \autoeval{Como exemplo conceitual proposto pelo autor: para uma aeronave de 1{,}8 t, seria viável substituir um IO-540 de \SI{320}{HP} por um motor de \SI{200}{HP} complementado por um motor elétrico de \SI{120}{HP} dedicado às fases críticas (decolagem e subida).} A literatura aponta ganhos típicos de fuel burn entre 12\% e 30\% em arquiteturas paralelas, dependendo do grau de hibridização e do perfil de missão \cite{sciencedirect_hybrid, fuel_economy_hybrid}; em demonstrações comerciais, a Ampaire reportou economias de até 40\% no custo de combustível em rotas de curta distância \cite{ampaire_demo}.
+    \item \textbf{Limitações:} Ainda em fase experimental para aeronaves certificadas. Programas como o magniX e o Ampaire EEL exploram retrofits híbridos em aeronaves leves, com demonstrações operacionais em curso desde 2020 \cite{ampaire_demo, wiki_hybrid_electric}, mas a certificação sob FAR 23 / RBAC 23 ainda não foi formalizada para uso agrícola. Os custos atuais de integração (motor elétrico aeronáutico certificado + ESC + banco de baterias certificado + sistema de gerenciamento) são proibitivos para o segmento agrícola, que opera com margens estreitas.
 \end{itemize}
 
 \section{Desempenho de Hélices e Seleção de Materiais}
 
-A eficiência do sistema propulsivo depende da seleção adequada das hélices para a transmissão do torque. Diferentemente do escopo de VANTs com integração de sistemas COTS de pequeno porte, em aeronaves de Classe IV a hélice é um componente certificado individualmente, geralmente fabricado por especialistas como Hartzell, McCauley ou MT-Propeller, e o seu projeto considera carregamentos aeroelásticos complexos.
+A eficiência do sistema propulsivo depende da seleção adequada das hélices para a transmissão do torque. Em aeronaves agrícolas certificadas da faixa de 1 a 2{,}5 t, a hélice é um componente certificado individualmente (sob FAR 35 / RBAC 35), tipicamente fabricado por especialistas como Hartzell, McCauley ou MT-Propeller, e o seu projeto considera carregamentos aeroelásticos complexos. 
 
 \subsection{Hélices de Velocidade Constante (Passo Variável)}
-Em aeronaves de Classe IV, o uso de hélices de \textbf{velocidade constante} é obrigatório para otimizar o ponto de operação do motor em regimes distintos (decolagem, cruzeiro, pulverização). O Ipanema EMB-202 utiliza uma Hartzell tripá de velocidade constante; o AT-802 utiliza Hartzell pentá. O mecanismo de variação de passo é hidráulico, atuado por um governador (\textit{constant-speed unit}) que mantém o RPM-alvo independentemente da pressão de admissão.
+Em aeronaves da faixa de interesse, o uso de hélices de velocidade constante é padrão para otimizar o ponto de operação do motor em regimes distintos (decolagem, cruzeiro, pulverização). O Ipanema EMB-202 utiliza uma Hartzell tripá de velocidade constante \cite{embraer202, embraer202_wiki}; o PA-25 Pawnee em suas variantes mais recentes utiliza hélice McCauley ou Hartzell de velocidade constante \cite{piper_pa25}. O mecanismo de variação de passo é hidráulico, atuado por um governador (\textit{constant-speed unit}) que mantém o RPM-alvo independentemente da pressão de admissão.
 
-\subsection{Engenharia de Materiais na Resiliência Estrutural}
-A seleção do material da hélice afeta não apenas a eficiência aerodinâmica, mas a integridade estrutural e a propagação de vibrações pelo \textit{frame} do VANT. As considerações a seguir aplicam-se principalmente às classes inferiores e à integração COTS; em aeronaves de Classe IV, a escolha do material é determinada pelo fabricante certificador da hélice em consonância com o motor.
+A operação a velocidade constante permite explorar com eficácia as curvas de Part Throttle Fuel Consumption analisadas na Seção \ref{sec:curvas_lycoming}: durante o cruzeiro, o piloto reduz o RPM e a pressão de admissão, operando o motor próximo da curva de \textit{best economy}, enquanto na decolagem o governador permite que o motor atinja o RPM máximo na curva de \textit{best power} \cite{lycomingmanual, io360manual}. \autoeval{Valores típicos extraídos das curvas e da prática operacional são da ordem de 2.300 RPM e 22 inHg em cruzeiro econômico, contra 2.700 RPM em decolagem para os motores da família IO-540; a confirmação dos valores exatos para um motor específico exige consulta ao Pilot's Operating Handbook (POH) da aeronave correspondente.}
 
-Para motores a combustão (ICE), especialmente do ciclo 2T com grande deslocamento volumétrico, o uso de fibra de carbono rígida (CFRP) deve ser avaliado com cautela. A elevada rigidez do material transmite as vibrações torcionais do motor diretamente para o eixo, o que pode reduzir a vida útil dos rolamentos e induzir falhas mecânicas severas \cite{tiruvenkadam2024}. Nessas aplicações, hélices de madeira laminada atuam como amortecedores naturais de vibração. Por outro lado, para tração puramente elétrica ou sistemas híbridos paralelos, onde o torque é contínuo e estável, hélices de CFRP são preferíveis pelo seu baixo peso e alta resistência à deflexão \cite{tiruvenkadam2024}.
+\subsection{Engenharia de Materiais e Seleção da Hélice}
+A escolha do material da hélice afeta a eficiência aerodinâmica, a integridade estrutural, a propagação de vibrações ao \textit{frame} e a tolerância a danos por impacto com material vegetal (frequente em voos rasantes de pulverização). Em aeronaves certificadas, a escolha é determinada pelo fabricante da hélice em consonância com o motor.
 
-Em aeronaves de Classe IV, a maioria das hélices certificadas é construída em alumínio forjado (variantes Hartzell HC-B3 e HC-B5) ou compósitos de fibra de carbono com encapsulamento metálico (Hartzell Top Prop \textit{composite}), oferecendo equilíbrio entre rigidez torcional, resistência à fadiga e tolerância a impactos com material vegetal durante voos rasantes.
+Para motores aeronáuticos de pistão com torque pulsante (todos os boxer 4T da faixa de interesse), hélices de \textbf{alumínio forjado} (variantes Hartzell HC-C2YK, HC-C3YR e similares) são a opção tradicional, oferecendo equilíbrio entre rigidez torcional, capacidade de absorção de vibrações de baixa frequência e tolerância a deformação plástica em caso de impacto leve com vegetação. Hélices de \textbf{compósito} (CFRP encapsulado, com matriz de ataque metálico, como exemplo: Hartzell ASC-II) oferecem redução de massa relevante em relação ao alumínio --- o fabricante reporta valores da ordem de 20\% em linhas como a Hartzell Trailblazer \cite{hartzell_trailblazer, hartzell_composite_faq} ---, mas exigem balanceamento dinâmico cuidadoso para evitar transmissão de vibrações de alta frequência aos rolamentos do virabrequim. Hélices de \textbf{madeira laminada} (com laminação de Sitka spruce ou bétula reforçadas com revestimento de fibra de vidro) foram historicamente utilizadas em aeronaves agrícolas pioneiras (Pawnee 150), mas hoje têm uso restrito a aviões de aviação geral leves.
 
 \begin{table}[H]
 \centering
-\caption{Comparativo de Materiais de Hélices --- Aplicabilidade por Classe}
+\caption{Comparativo de Materiais de Hélices Aplicáveis à Faixa de 1--2{,}5 t}
 \label{tab:helices}
 \footnotesize
-\renewcommand{\arraystretch}{1.3} % Dá um respiro vertical entre as linhas
+\renewcommand{\arraystretch}{1.3}
 \begin{tabularx}{\textwidth}{@{} 
     >{\hsize=1.1\hsize\raggedright\arraybackslash}X 
     c 
@@ -294,81 +343,81 @@ Em aeronaves de Classe IV, a maioria das hélices certificadas é construída em
     >{\hsize=1.3\hsize\raggedright\arraybackslash}X 
     @{}}
 \toprule
-\textbf{Material} & \textbf{Rigidez} & \textbf{Peso} & \textbf{Vibração} & \textbf{Resistência} & \textbf{Aplicação Recomendada} \\ \midrule
-Madeira Laminada & Média & Médio & Alta Absorção & Baixa (Quebra segura) & Motores 2T pequenos (mitigação de fadiga) \\
+\textbf{Material} & \textbf{Rigidez} & \textbf{Peso} & \textbf{Vibração} & \textbf{Tolerância a Impacto} & \textbf{Aplicação na Faixa} \\ \midrule
+Alumínio Forjado & Alta & Alto & Boa absorção & Muito Alta (deformação plástica) & Ipanema, Pawnee, AgWagon, Brave 300 \\
 \addlinespace
-Fibra de Carbono & Altíssima & Baixo & Baixa (Transmite) & Alta (Pode danificar eixo) & Motores Elétricos / Híbridos Paralelos \\
+Compósito CFRP encapsulado & Muito Alta & Médio & Transmite alta freq. & Alta (delaminação localizada) & Brave 375 \\
 \addlinespace
-Nylon/Carbono & Baixa & Médio & Média & Média & Drones leves (inadequado >\SI{25}{kg}) \\
-\addlinespace
-Alumínio Forjado & Alta & Alto & Baixa & Muito Alta & \textbf{Classe IV: Ipanema, AT-502} \\
-\addlinespace
-Compósito Encapsulado (CFRP + bordo de ataque metálico) & Alta & Médio & Baixa & Muito Alta & \textbf{Classe IV: AT-802 (penta-pá)} \\ \bottomrule
+Madeira Laminada & Média & Médio & Excelente absorção & Baixa (quebra segura) & Pawnee 150 (histórico, fora de produção) \\ \bottomrule
+\multicolumn{6}{l}{\footnotesize Compilação do autor com referência a \cite{tiruvenkadam2024} e catálogos Hartzell, McCauley.}
 \end{tabularx}
 \end{table}
 
-\section{Sensoriamento, Telemetria e Monitoramento Avançado}
+\section{Sensoriamento, Telemetria e Monitoramento}
 
-Para garantir a segurança operacional e o monitoramento detalhado da aeronave, a arquitetura eletrônica é segmentada entre a rede interna de aviônicos (Intra-VANT) e a comunicação externa com a estação de solo (Extra-VANT). Em aeronaves de Classe IV, os requisitos de aviônica são substancialmente mais exigentes devido à coexistência (ou substituição) entre pilotagem humana, pilotagem remota e operação autônoma supervisionada.
+Para garantir a segurança operacional e o monitoramento detalhado de aeronaves agrícolas tripuladas, a arquitetura eletrônica embarcada cobre quatro funções principais: (i) instrumentação do motor (CHT, EGT, fluxo de combustível, pressão de óleo, RPM); (ii) navegação e geo-referenciamento de pulverização; (iii) controle automático da vazão de aplicação; e (iv) comunicação rádio com a estação de solo e demais aeronaves do espaço aéreo.
 
 \subsection{Protocolos de Comunicação e Controle}
 \begin{itemize}
-    \item \textbf{Barramento Interno (CAN Bus / ARINC 825 / DroneCAN):} Para o gerenciamento de sistemas críticos (FADEC, GPS RTK, atuadores de superfícies de controle e injeção eletrônica), utiliza-se o padrão CAN Bus em suas variantes aeronáuticas. O DroneCAN (anteriormente UAVCAN) é o padrão para VANTs com controladora Pixhawk/PX4. Em aeronaves de Classe IV certificadas, o padrão ARINC 825 (CAN Bus aeronáutico) é o adotado para integração com sistemas FADEC e \textit{Engine Indication and Crew Alerting Systems} (EICAS).
+    \item \textbf{Barramento Interno (CAN Bus / ARINC 825):} Em motores certificados modernos (Lycoming iE2), o gerenciamento eletrônico utiliza barramento CAN Bus em variante aeronáutica (padrão ARINC 825), interligando FADEC, sensores de motor e o painel EICAS (\textit{Engine Indication and Crew Alerting System}) \cite{lycomingmanual, lycoming_io720}.
     
-    \item \textbf{Telemetria Externa (MAVLink e Aviônica Padrão):} A comunicação com a Estação de Controle em Solo (GCS) utiliza o protocolo MAVLink operando sobre redes de rádio (UHF 900 MHz) ou celulares (LTE/5G) em plataformas VANT. Em aeronaves tripuladas de Classe IV, a aviônica de cabine integra Sistemas de Voo Eletrônicos (EFIS) Garmin G600/G1000 ou Avidyne IFD, fornecendo informações de motor, navegação e geo-referenciamento de pulverização ao piloto.
+    \item \textbf{Sistemas Específicos de Aviação Agrícola:} Plataformas agrícolas modernas utilizam sistemas GPS dedicados de provedores especializados como AG-NAV \cite{agnav_official}, Satloc \cite{satloc_intelliflow} e TracMap \cite{tracmap_aviation} para geo-referenciamento da deriva de aplicação e controle automático de vazão (\textit{flow control}) acoplado à velocidade no solo (GS) lida pelo GPS. Esses sistemas permitem aplicação variável de defensivos por zona da lavoura (\textit{variable-rate application}) baseada em mapas de prescrição (PMAPs) \cite{satloc_intelliflow, kirk_1996_satloc}, reduzindo desperdício e impacto ambiental ao corrigir variações na vazão durante passes upwind/downwind em decorrência de mudanças na velocidade no solo \cite{kirk_1996_satloc}.
     
-    \item \textbf{Sistemas Específicos de Aviação Agrícola:} Plataformas como o Ipanema e o AT-502 utilizam sistemas DGPS dedicados (AGNAV, Satloc, TracMap) para geo-referenciamento da deriva de aplicação e controle automático de vazão (\textit{flow control}) acoplado à velocidade no solo (GS) lida pelo GPS.
+    \item \textbf{Aviônica de Cabine:} Os dados anteriormente enviado para a cabine por meio Sistemas de Voo Eletrônicos (EFIS) como Garmin G600 TXi ou Avidyne IFD-540, fornecendo informações de motor, navegação e geo-referenciamento de pulverização podem ser enviados Estação de Controle em Solo (GCS - Ground Control Station). Porém alguns exemplos de aeronaves clássicas (Pawnee, AgWagon, Ipanema EMB-201) ainda utilizam instrumentação analógica, dificultando a integração com sistemas de comunicação modernos para drones não tripulados.
 \end{itemize}
 
 \subsection{Monitoramento de Fluidos e Temperatura}
 A precisão na autonomia e a proteção termomecânica demandam sensores de leitura direta:
 
 \begin{itemize}
-    \item \textbf{Sensor de Fluxo (Flowmeter):} Mede o consumo volumétrico instantâneo na linha de combustível, apresentando maior precisão que boias de nível mecânicas, as quais sofrem interferência por inércia durante o voo. Em motores Lycoming IO-540, o sensor de fluxo é parte integrante do indicador de mistura (\textit{Fuel Flow / EGT analyzer}).
+    \item \textbf{Sensor de Fluxo (Flowmeter):} Mede o consumo volumétrico instantâneo na linha de combustível, apresentando maior precisão que boias de nível mecânicas, as quais sofrem interferência por inércia durante o voo. Em motores Lycoming IO-540, o sensor de fluxo é parte integrante do indicador de mistura (\textit{Fuel Flow / EGT analyzer}) acoplado a sistemas certificados como o JPI EDM-900/930, que substitui a instrumentação analógica de motor e integra RPM, MAP, EGT/CHT por cilindro, fluxo e pressão de combustível e óleo em uma única tela \cite{jpi_edm900, jpi_edm930_manual}.
     
-    \item \textbf{Termopares (Tipo K):} São essenciais para o gerenciamento da saúde do motor a combustão:
+    \item \textbf{Termopares (Tipo K) por cilindro:} São essenciais para o gerenciamento da saúde do motor a combustão. Em motores de pistão das famílias O-540/IO-540/IO-720, a instrumentação moderna inclui CHT (\textit{Cylinder Head Temperature}) e EGT (\textit{Exhaust Gas Temperature}) individuais para cada cilindro (6 ou 8 sensores), permitindo diagnóstico precoce de cilindros operando fora da estequiometria ideal:
     \begin{itemize}
-        \item \textit{Sensor de Cabeçote (CHT):} Monitora a temperatura do bloco do cilindro, prevenindo danos por sobreaquecimento. No IO-540, limite de \SI{500}{\degree F} (\SI{260}{\degreeCelsius}).
-        \item \textit{Sensor de Exaustão (EGT):} Fornece a temperatura dos gases ejetados. Variações anômalas no EGT indicam misturas ar/combustível fora da estequiometria ideal, permitindo correções na injeção eletrônica.
+        \item \textit{CHT:} Limite máximo de \SI{500}{\degree F} (\SI{260}{\degreeCelsius}) no IO-540 \cite{lycomingmanual}; valores acima indicam refrigeração comprometida ou \textit{detonation}.
+        \item \textit{EGT:} Variações anômalas indicam mistura ar/combustível fora da estequiometria ideal, permitindo ajustes manuais ou correções automatizadas via FADEC. O monitoramento de EGT por cilindro é a base para a técnica de operação \textit{Lean of Peak} (LOP), que segundo a literatura técnica de aviação geral pode reduzir o consumo de combustível em torno de 20\% em cruzeiro, ao custo de uma redução modesta (cerca de 5\%) na velocidade \cite{aopa_lop}. Em campo, operadores reportam tipicamente economias da ordem de 2 a 3 galões/hora em motores grandes (Continental e Lycoming) operando LOP com injetores balanceados \cite{aviation_consumer_gami}.
+        \item Em alguns casos a adaptação do ponto de ignição do combustivel pela vela quando em velocidades de cruzeiro tornaria o regime econômico mais eficiente, mas isso exigiria modificações no sistema de ignição.
     \end{itemize}
-    
-    \item \textbf{Sensores Específicos de Turboélices:} No PT6A, parâmetros adicionais como ITT (\textit{Inter-Turbine Temperature}), Ng (rotação do gerador de gás), Np (rotação da hélice) e torque medido por torquímetro hidráulico são monitorados em tempo real e fornecidos via barramento ARINC 825 ao EICAS.
 \end{itemize}
 
 \subsection{Digital Twins}
 
-A integração de \textit{Digital Twins} surge como tecnologia habilitadora para monitoramento em tempo real, manutenção preditiva e simulação de condições de contorno realistas. Para o AGRO-VANT, propõe-se a estruturação de um \textit{digital twin} composto por três camadas: (i) um modelo termodinâmico do conjunto motopropulsor calibrado por dados de bancada, (ii) um modelo aeroelástico da estrutura da aeronave, e (iii) um modelo de degradação de componentes (BSFC ao longo do TBO, fadiga de hélice) alimentado pela telemetria embarcada. Essa abordagem é alinhada com práticas emergentes da Embraer e da Pratt \& Whitney Canada no monitoramento da frota de PT6A operacional, e pode subsidiar políticas de manutenção baseada em condição (CBM --- \textit{Condition-Based Maintenance}).
+A integração de \textit{Digital Twins} surge como tecnologia habilitadora para monitoramento em tempo real, manutenção preditiva e simulação de condições de contorno realistas. Para o AGRO-VANT, propõe-se a estruturação de um \textit{digital twin} composto por três camadas: (i) um modelo termodinâmico do conjunto motopropulsor calibrado por dados de bancada e pelas curvas de \textit{Part Throttle Fuel Consumption} apresentadas na Seção \ref{sec:curvas_lycoming}; (ii) um modelo multi-corpo da estrutura da aeronave; e (iii) um modelo de degradação de componentes (fadiga acumulada na hélice, desgaste de cilindros) alimentado pela telemetria embarcada. Essa abordagem está alinhada com práticas emergentes da Embraer e dos fabricantes de motores aeronáuticos para frotas em operação, e pode subsidiar políticas de manutenção baseada em condição (CBM --- \textit{Condition-Based Maintenance}). \autoeval{A quantificação de ganhos específicos (e.g., extensão do TBO efetivo) depende de validação experimental ainda não conduzida no escopo deste estudo, configurando linha de pesquisa para os próximos estágios do projeto.}
 
 \section{Referências Normativas e Requisitos de Certificação}
 
-A operação e certificação de aeronaves agrícolas de Classe IV no Brasil está sob jurisdição da Agência Nacional de Aviação Civil (ANAC) e regida por um conjunto de regulamentos específicos:
+A operação e certificação de aeronaves agrícolas tripuladas na faixa de 1 a 2{,}5 toneladas no Brasil estão sob jurisdição da Agência Nacional de Aviação Civil (ANAC) e regidas por um conjunto de regulamentos específicos:
 
 \begin{itemize}
-    \item \textbf{RBAC 23:} Estabelece os requisitos de aeronavegabilidade para aeronaves de categoria normal (MTOW $\leq$ \SI{8618}{kg}) \cite{anacrbac23}. É o regulamento aplicável tanto ao Ipanema quanto a toda a família Air Tractor operada no Brasil. Equivalente ao FAR 23 (FAA) e CS-23 (EASA).
+    \item \textbf{RBAC 23:} Estabelece os requisitos de aeronavegabilidade para aeronaves de categoria normal (MTOW $\leq$ \SI{8618}{kg}) \cite{anacrbac23}. É o regulamento aplicável a todas as aeronaves de referência analisadas neste trabalho (Pawnee, AgWagon, Ipanema, Pawnee Brave). Equivalente ao FAR 23 (FAA) e CS-23 (EASA).
     
-    \item \textbf{RBAC 137 --- Emenda nº 05 (Resolução nº 716/2023):} Em vigor desde 2 de outubro de 2023, estabelece o cadastro e os requisitos operacionais para operações aeroagrícolas no Brasil \cite{anac137}. A principal mudança da Emenda 05 foi a substituição do antigo Certificado de Operador Aéreo (COA) pelo Cadastro de Operador Aeroagrícola (CDAG), simplificando o processo de habilitação. A frota brasileira ao abrigo do regulamento conta com aproximadamente \num{2500} aeronaves \cite{anac137}.
+    \item \textbf{RBAC 33:} Regulamento de certificação de motores aeronáuticos a pistão. Todos os motores Lycoming O-540, IO-540 e IO-720, bem como os Continental IO-520 e TSIO-520 mencionados neste trabalho, possuem certificações da FAA sob o predecessor CAR 13 ou RBAC 33, com type certificates específicos (e.g., TC 1E4 para a família IO-540, TC E-295 para a O-540).
     
-    \item \textbf{IS 137.201-001E:} Instrução Suplementar que regulamenta o uso do etanol em aeronaves agrícolas, exigindo Autorização Especial de Voo (AEV) emitida sob o RBAC 21.175 \cite{anacis137}.
+    \item \textbf{RBAC 35:} Regulamento de certificação de hélices. As hélices Hartzell e McCauley utilizadas nas aeronaves de referência possuem type certificates próprios (e.g., Hartzell HC-C2YK sob TC P-924).
     
-    \item \textbf{RBAC-E 94:} Regulamenta as operações com Aeronaves Não Tripuladas (drones) no Brasil. Para o AGRO-VANT operar como VANT (não-tripulado) na faixa de Classe IV, seria necessário um processo de certificação específico, dado que o regulamento atual cobre tipicamente plataformas até \SI{150}{kg} sem requisitos de aeronavegabilidade formais; acima dessa massa, aplicam-se os mesmos requisitos das aeronaves tripuladas (RBAC 21 / RBAC 23) \cite{anacrbac23}.
+    \item \textbf{RBAC 137 --- Emenda nº 05 (Resolução nº 716/2023):} Em vigor desde 2 de outubro de 2023, estabelece o cadastro e os requisitos operacionais para operações aeroagrícolas no Brasil \cite{anac137}. A principal mudança da Emenda 05 foi a substituição do antigo Certificado de Operador Aéreo (COA) pelo Cadastro de Operador Aeroagrícola (CDAG), simplificando o processo de habilitação. A frota brasileira ao abrigo do regulamento conta com aproximadamente \num{2500} aeronaves, em sua maioria Ipanemas e variantes \cite{anac137}.
     
-    \item \textbf{FAR Part 137 (FAA) e CS-VLA / CS-23 (EASA):} Regulamentos internacionais análogos, relevantes para certificação cruzada e exportação.
+    \item \textbf{IS 137.201-001E:} Instrução Suplementar que regulamenta o uso do etanol em aeronaves agrícolas, exigindo Autorização Especial de Voo (AEV) emitida sob a Subparte 21.175 do RBAC 21 \cite{anacis137}. Aplicável especificamente ao caso do EMB-202A.
+    
+    \item \textbf{Normas ABNT aplicáveis:} A ABNT NBR ISO 9001 é referência para sistemas de qualidade em fabricantes; a NBR 14785 trata da segurança operacional na aviação agrícola; e a NBR ISO 21384 (em adaptação a partir do ISO/TC 20/SC 16) cobre futuras aeronaves não tripuladas. Para o segmento tripulado tradicional da faixa, a referência normativa principal permanece sendo os RBACs.
+    
+    \item \textbf{FAR Part 137 (FAA) e CS-VLA / CS-23 (EASA):} Regulamentos internacionais análogos, relevantes para certificação cruzada via acordos bilaterais (e.g., o BASA Brasil-EUA, que reconhece automaticamente type certificates da FAA na frota brasileira).
 \end{itemize}
 
-A escolha do grupo motopropulsor é diretamente condicionada por esses regulamentos: motores com FAA Type Certificate (como a família O-540 sob TC 1E4 ou a PT6A sob TC E4EA) atendem automaticamente aos requisitos de aeronavegabilidade brasileiros via acordos bilaterais, enquanto motores não-certificados (a maioria dos motores 2T usados em VANTs) somente podem ser empregados em plataformas operando sob regime de aeronave experimental ou não-tripulada com restrições operacionais.
+A escolha do grupo motopropulsor é diretamente condicionada por esses regulamentos. Motores com FAA Type Certificate (toda a família O-540, IO-540, IO-720, IO-520, TSIO-520 listada na Tabela \ref{tab:motores_faixa}) atendem automaticamente aos requisitos de aeronavegabilidade brasileiros via acordos bilaterais, com homologação simplificada. Motores não certificados (motores automotivos convertidos, motores 2T de uso industrial, motores BLDC de aplicação \textit{drone}) somente podem ser empregados sob regime de aeronave experimental (Subparte 21.191 do RBAC 21) com restrições operacionais e proibições de transporte oneroso.
 
 \section{Conclusão e Combinações Recomendadas}
 
-O estudo demonstra que existe um claro ponto de transição tecnológica em torno do MTOW de \SI{600}{kg} a \SI{1000}{kg}, no qual a engenharia de propulsão deixa de ser dominada por motores 2T COTS e passa a ser regida por motores aeronáuticos certificados de pistão (4T de grande cilindrada) ou turboélices.
+O estudo demonstra que a faixa de aeronaves agrícolas tripuladas de 1 a 2{,}5 toneladas apresenta convergência tecnológica notável em motores aeronáuticos de pistão certificados, de configuração boxer horizontalmente oposta, com potências entre \SI{235}{HP} e \SI{400}{HP}. A análise das curvas oficiais Lycoming (Seção \ref{sec:curvas_lycoming}), o levantamento das plataformas de referência (Tabela \ref{tab:plataformas_referencia}) e a comparação direta dos motores aplicáveis (Tabela \ref{tab:motores_faixa}) convergem para um conjunto de recomendações estruturadas por cenário de massa máxima de decolagem.
 
 \subsection{Cenários Operacionais Recomendados}
 
 \begin{table}[H]
 \centering
-\caption{Recomendações de Combinações Propulsivas por Cenário de Missão}
+\caption{Recomendações de Combinações Propulsivas por Cenário de Missão na Faixa 1--2{,}5 t}
 \label{tab:recomendacoes}
 \footnotesize
-\renewcommand{\arraystretch}{1.3} 
+\renewcommand{\arraystretch}{1.3}
 \begin{tabularx}{\textwidth}{@{} 
     >{\hsize=0.9\hsize\raggedright\arraybackslash}X 
     >{\hsize=1.0\hsize\raggedright\arraybackslash}X 
@@ -376,32 +425,30 @@ O estudo demonstra que existe um claro ponto de transição tecnológica em torn
     >{\hsize=1.2\hsize\raggedright\arraybackslash}X 
     @{}}
 \toprule
-\textbf{Cenário} & \textbf{Propulsão} & \textbf{Hélice} & \textbf{Aviônica} \\ \midrule
-\textbf{Cenário A:}\newline AGRO-VANT \SI{1000}{kg}, missões $\leq$ \SI{2}{h}, foco em ETOH/AvGas & Lycoming IO-540-K1J5 (320 HP, 4T boxer, EFI/iE2) & Hartzell tripá Al forjado, vel. constante & EFIS Garmin G600 + DGPS AGNAV, CAN Bus ARINC 825, EICAS dedicado \\
+\textbf{Cenário (MTOW)} & \textbf{Motor + Hélice} & \textbf{Aviônica} & \textbf{Combustível / Observação} \\ \midrule
+\textbf{Cenário A:}\newline AGRO-VANT 1{,}0--1{,}5 t,\newline missão $\leq$ \SI{2}{h},\newline pulverização leve & Lycoming O-540-E4B5 (260 HP) ou IO-540-K1D5 (300 HP) + Hartzell HC-C2YK bipá Al forjado, vel. constante & EFIS Garmin G500 TXi + DGPS Satloc / TracMap, sensor JPI EDM-900 com CHT/EGT por cilindro & AvGas 100LL; alternativa etanol via IS 137.201-001E após retrofit \\
 \addlinespace
-\textbf{Cenário B:}\newline AGRO-VANT \SI{2000}{kg}-\SI{4000}{kg}, alta produtividade, baixo TBO total & P\&W PT6A-140AG (867 SHP turboélice, queima Jet-A1/diesel) & Hartzell HC-B5 penta-pá compósita encapsulada & EICAS turbina + FADEC, DGPS Satloc, telemetria LTE/5G, digital twin embarcado \\
+\textbf{Cenário B (Recomendado):}\newline AGRO-VANT 1{,}5--2{,}0 t,\newline missão $\leq$ \SI{3}{h},\newline equivalente Ipanema/Brave 300 & Lycoming IO-540-K1J5 (320 HP) + Hartzell HC-C3YR tripá Al forjado, vel. constante & EFIS Garmin G600 TXi + DGPS AGNAV, EICAS dedicado, retrofit para FADEC Lycoming iE2 quando disponível & Etanol via IS 137.201-001E (paradigma EMB-202A): vantagem econômica e ambiental para o cenário brasileiro \\
 \addlinespace
-\textbf{Cenário C:}\newline AGRO-VANT \SI{1500}{kg} não-tripulado (VANT certificável) & Híbrido paralelo Rotax 915 iS (~140 HP) + 2x BLDC 60 kW & Hélice compósita 3-pá, passo variável & Pixhawk/Cube Orange duplo, DroneCAN, MAVLink + LTE, redundância tripla \\
+\textbf{Cenário C:}\newline AGRO-VANT 2{,}0--2{,}5 t,\newline alta produtividade,\newline grandes hoppers & Lycoming IO-720-D1CD (375--400 HP) + Hartzell HC-E4N5L quadripá compósita encapsulada, vel. constante & EFIS Garmin G1000 NXi + DGPS RTK, ADS-B Out, manutenção baseada em condição (CBM) & AvGas 100LL; alta densidade de potência justifica IO-720 sobre IO-540 \\
 \addlinespace
-\textbf{Cenário D:}\newline AGRO-VANT longo alcance ($>$ \SI{6}{h}) & P\&W PT6A-67AG (1.350 SHP) & Hartzell penta-pá Ø 2{,}69 m & ARINC 825 + ADS-B Out, sensor de fluxo de combustível certificado \\ \bottomrule
+\textbf{Cenário D:}\newline Hot-and-High (planaltos, dias quentes) em qualquer MTOW da faixa & Continental TSIO-520-T turbocomprimido (310 HP) com waste-gate variável + hélice tripá vel. constante & Aviônica padrão + sensor de pressão de \textit{manifold} para gerenciamento do turbocompressor & AvGas 100LL; \textit{boost} compensa perda de densidade do ar (justifica AgHusky em planaltos) \\ \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Síntese das Recomendações}
 
 \begin{enumerate}
-    \item \textbf{Para a configuração base do AGRO-VANT (MTOW $\sim$\SI{1000}{kg} a \SI{2000}{kg}):} A recomendação primária é a adoção do conjunto Lycoming IO-540 + Hartzell tripá de velocidade constante, replicando o paradigma consolidado do EMB-202 Ipanema. Essa combinação oferece o melhor compromisso entre custo de aquisição, disponibilidade de assistência técnica no Brasil, suporte à operação com etanol (apoiando a agenda de descarbonização) e conformidade direta com o RBAC 23 / RBAC 137.
+    \item \textbf{Para a configuração base do AGRO-VANT (MTOW $\sim$\SI{1500}{kg}--\SI{2000}{kg}):} A recomendação primária é a adoção do conjunto Lycoming IO-540-K1J5 + Hartzell tripá HC-C3YR de velocidade constante (Cenário B), replicando o paradigma consolidado do EMB-202 Ipanema. Essa combinação oferece o melhor compromisso entre custo de aquisição, disponibilidade de assistência técnica no Brasil, suporte à operação com etanol (apoiando a agenda nacional de descarbonização) e conformidade direta com o RBAC 23 e RBAC 137. O peso seco do motor (\SI{200}{kg}) e seu envelope dimensional são compatíveis com a estrutura típica de aeronaves agrícolas leves.
     
-    \item \textbf{Para configurações de alta produtividade (MTOW $>$ \SI{4000}{kg}):} Recomenda-se a transição para turboélice da família PT6A. O ganho em densidade de potência, TBO estendido e tolerância a operações \textit{hot-and-high} compensa o maior custo inicial em operações comerciais intensivas.
+    \item \textbf{Para configurações com MTOW superior a \SI{2000}{kg}:} A migração para o Lycoming IO-720-D1CD (400 HP, 8 cilindros) é justificada quando o aumento de massa total exige potência adicional não fornecida pelo IO-540. O acréscimo de aproximadamente \SI{53}{kg} no peso seco do motor é compensado pelo ganho de potência de 25\% e pela maior margem de potência em densidade de altitude.
     
-    \item \textbf{Para configurações não-tripuladas (RPA de grande porte):} A topologia híbrida paralela (Rotax 915 iS + motores BLDC) emerge como linha de desenvolvimento promissora, dado o ganho em redundância (capacidade de pouso seguro com falha de um dos vetores) e a otimização do consumo em regimes parciais de pulverização. A certificação ainda é desafio aberto, sugerindo-se diálogo com a ANAC para enquadramento sob RBAC-E 94 com requisitos suplementares.
+    \item \textbf{Para operações em alta densidade de altitude:} Considerar o Continental TSIO-520-T turbocomprimido (caso AgHusky) como alternativa, em particular para aeronaves operando frequentemente em pistas acima de \SI{1000}{m} de elevação e temperaturas acima de \SI{32}{\degreeCelsius}. A turbocompressão permite manter potência nominal em altitudes onde motores naturalmente aspirados perdem 10\% a 15\% da potência.
     
-    \item \textbf{Para a aviônica:} Em todas as configurações de Classe IV, recomenda-se a adoção do barramento CAN Bus em variante aeronáutica (ARINC 825 para tripuladas, DroneCAN para não-tripuladas) com redundância dupla, integração de telemetria DGPS de uso agrícola e arquitetura de \textit{digital twin} para manutenção baseada em condição.
+    \item \textbf{Para a aviônica e gestão de propulsão:} Recomenda-se a adoção de instrumentação digital integrada (EFIS Garmin TXi ou equivalente) com monitoramento CHT/EGT por cilindro, sensor de fluxo de combustível e DGPS de uso agrícola integrado. A arquitetura de \textit{digital twin} para manutenção baseada em condição representa caminho de modernização recomendável.
+    
+    \item \textbf{Sobre tração elétrica e hibridização:} A tração puramente elétrica é tecnicamente inviável para a faixa de 1 a 2{,}5 t em horizonte de 10 a 15 anos, dado o balanço de massa de baterias atual e previsível. A hibridização paralela representa linha de pesquisa promissora, mas ainda dependente de avanços em certificação aeronáutica de motores elétricos e baterias.
 \end{enumerate}
-
-\subsection{Trabalhos Futuros}
-
-A continuidade do projeto PIBIT poderá explorar, em fases subsequentes: (i) modelagem termodinâmica detalhada do conjunto IO-540 a etanol em ambiente de bancada, (ii) avaliação experimental de governadores eletrônicos para hélice de passo variável em condições brasileiras, (iii) prototipagem da arquitetura híbrida paralela aplicada a um demonstrador subescala, e (iv) desenvolvimento do \textit{digital twin} integrado ao sistema de telemetria embarcado.
 
 \newpage
 
@@ -414,64 +461,107 @@ A continuidade do projeto PIBIT poderá explorar, em fases subsequentes: (i) mod
     \bibitem{heywood1988}
     Heywood, J. B. (1988). \textit{Internal Combustion Engine Fundamentals}. New York: McGraw-Hill Education.
 
-    % Materiais de Hélices (Nylon vs Carbono)
+    % Materiais de Hélices
     \bibitem{tiruvenkadam2024}
     Tiruvenkadam, N., et al. (2024). \textit{Investigation of Structural and Thermal Analysis of Drone Propeller Materials}. Journal of Physics: Conference Series, 2925, 012002. IOP Publishing. Disponível em: \url{https://doi.org/10.1088/1742-6596/2925/1/012002}
 
-    % Especificações Comerciais de Motores a Combustão (ICE) -- Classes inferiores
-    \bibitem{da100l}
-    AJ Aircraft. \textit{Desert Aircraft 100cc Gas Engine-DA 100L}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.aj-aircraft.com/Desert-Aircraft-100cc-Gas-Engine_p_433.html}
+    % ==== Manuais e dados oficiais de fabricantes de motores aeronáuticos ====
 
-    \bibitem{infinject}
-    INF Inject. \textit{INF INJECT DA 100 EFI – The Leaders of UAV Electronic Fuel Injected Solutions}. Acessado em: 11 de março de 2026. Disponível em: \url{https://infinject.com/inf-inject-da-100-efi/}
-
-    \bibitem{dle120}
-    DLE Engines. \textit{DLE120 RC Model engine}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.dlengine.com/en/rcengine/dle120-2/}
-
-    \bibitem{hirth4202}
-    Hirth Engines. \textit{Hirth 4202 - Lightweight Heavy Fuel Two-Stroke Engine}. Acessado em: 11 de março de 2026. Disponível em: \url{https://hirthengines.com/4202-heavy-fuel-two-stroke-engine/}
-
-    \bibitem{hirth4103}
-    Hirth Engines. \textit{Hirth 4103 - Air-Cooled Two-Stroke Engine}. Acessado em: 11 de março de 2026. Disponível em: \url{https://hirthengines.com/4103-engine-air-cooled-two-stroke-engine/}
-
-    \bibitem{rotax912}
-    Rotax Aircraft Engines. \textit{912 iS Sport | iSc Sport 100 HP}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.flyrotax.com/products/912-is-sport-isc-sport}
-
-    % Motores Elétricos para Carga Extrema
-    \bibitem{ligpower}
-    Ligpower. \textit{Heavy-lift Drone Motor (Max Thrust 100kg)}. Acessado em: 11 de março de 2026. Disponível em: \url{https://www.ligpower.com/categorys/heavy-lift-drone-motor}
-
-    \bibitem{vl1035}
-    T-Motor. \textit{VL1035 KV150 VTOL UAV Motor for 35kg Heavy-Lift Drones}. Acessado em: 11 de março de 2026. Disponível em: \url{https://store.tmotor.com/product/vl1035-large-drone-motors-for-heavy-lift-uavs.html}
-
-    % ==== Referências adicionais para Classe IV (MTOW > 1000 kg) ====
-
-    \bibitem{embraer202}
-    Embraer / Indústria Aeronáutica Neiva. \textit{EMB-202 Ipanema --- Especificações Técnicas}. Botucatu, Brasil. Acessado em: 12 de maio de 2026.
+    \bibitem{io360manual}
+    Lycoming Engines. \textit{Operator's Manual --- O-360, HO-360, IO-360, AIO-360, HIO-360 \& TIO-360 Series Aircraft Engines}, 8th Edition, Part No. 60297-12, Approved by FAA. Williamsport, PA: October 2005. Figuras 3-5 (Part Throttle Fuel Consumption --- IO-360-A,-C,-D,-J,-K; AIO-360 Series) e 3-21 (Sea Level and Altitude Performance --- mesma série).
 
     \bibitem{lycomingmanual}
     Lycoming Engines. \textit{Operator's Manual --- O-540 and IO-540 Series Aircraft Engines}, 4th Edition, Approved by FAA. Disponível em: \url{https://www.lycoming.com/sites/default/files/file/2025-02/60297-10\%20-\%20O-540\%20and\%20IO-540\%20Series.pdf}
 
-    \bibitem{airtractor802}
-    Air Tractor Inc. \textit{AT-802F Specifications \& Performance}. Acessado em: 12 de maio de 2026. Disponível em: \url{https://at802f.com/aircraft-overview/specifications-performance/}
+    \bibitem{lycoming_io720}
+    Lycoming Engines. \textit{720 Series Engines --- Technical Specifications}. Williamsport, PA. Acessado em: 12 de maio de 2026. Disponível em: \url{https://www.lycoming.com/engines}
 
-    \bibitem{airtractor502}
-    Air Tractor Inc. \textit{AT-502XP Specifications}. Acessado em: 12 de maio de 2026.
+    \bibitem{continental_io520}
+    Continental Motors Inc. \textit{IO-520 and TSIO-520 Series Engine Specifications and Type Certificate Data Sheet}. Acessado em: 12 de maio de 2026.
 
-    \bibitem{pwcpt6a}
-    Pratt \& Whitney Canada. \textit{PT6A-140AG Turboprop Engine --- Technical Data}. Acessado em: 12 de maio de 2026.
+    % ==== Aeronaves agrícolas de referência (faixa 1--2,5 t) ====
 
-    \bibitem{covingtonpt6}
-    Covington Aircraft. \textit{The PT6A-140AG Turboprop Powers Air Tractor's AT502XP Aircraft}. Acessado em: 12 de maio de 2026. Disponível em: \url{https://www.covingtonaircraft.com/media/the-pt6a-140ag-turboprop-powers-air-tractors-at502xp-aircraft/}
+    \bibitem{embraer202}
+    Embraer / Indústria Aeronáutica Neiva. \textit{EMB-200, EMB-201, EMB-202 e EMB-203 Ipanema --- Especificações Técnicas}. Botucatu, Brasil. Acessado em: 12 de maio de 2026.
+
+    \bibitem{piper_pa25}
+    Piper Aircraft Corporation. \textit{PA-25 Pawnee Type Certificate Data Sheet and Pilot's Operating Handbook}. Variantes PA-25-150 (Lycoming O-320), PA-25-235 Pawnee B/C/D (Lycoming O-540-B2B5) e PA-25-260 (Lycoming O-540-E4B5). Acessado em: 12 de maio de 2026.
+
+    \bibitem{cessna_188}
+    Cessna Aircraft Company. \textit{Model 188 Series AgWagon, AgPickup, AgTruck and AgHusky --- Type Certificate and Operating Handbook}. Wichita, KS. Acessado em: 12 de maio de 2026.
+
+    \bibitem{piper_pa36}
+    Piper Aircraft Corporation / WTA Incorporated. \textit{PA-36 Pawnee Brave Series --- Type Certificate and Pilot's Operating Handbook}. Variantes Brave 300 (Lycoming IO-540-K1G5), Brave 375 e Brave 400 (Lycoming IO-720-D1CD). Acessado em: 12 de maio de 2026.
+
+    % ==== Referências normativas ANAC ====
 
     \bibitem{anac137}
     Agência Nacional de Aviação Civil (ANAC). \textit{RBAC nº 137 --- Emenda 05: Cadastro e Requisitos Operacionais: Operações Aeroagrícolas}. Resolução nº 716, de 13 de junho de 2023. Vigência: 2 de outubro de 2023.
 
     \bibitem{anacis137}
-    Agência Nacional de Aviação Civil (ANAC). \textit{Instrução Suplementar IS 137.201-001E --- Uso de Etanol em Aeronaves Agrícolas}.
+    Agência Nacional de Aviação Civil (ANAC). \textit{Instrução Suplementar IS 137.201-001E --- Uso de Etanol em Aeronaves Agrícolas}. Aprovada pela Portaria nº 217/SAR, de 26 de janeiro de 2022.
 
     \bibitem{anacrbac23}
-    Agência Nacional de Aviação Civil (ANAC). \textit{RBAC nº 23 --- Requisitos de Aeronavegabilidade: Aviões Categoria Normal}.
+    Agência Nacional de Aviação Civil (ANAC). \textit{RBAC nº 23 --- Requisitos de Aeronavegabilidade: Aviões Categoria Normal}. Aplicável a aeronaves com MTOW $\leq$ \SI{8618}{kg}.
+
+    % ==== Referências adicionais (revisão de citações) ====
+
+    \bibitem{battery_aviation_review}
+    Authors collective. \textit{Battery technology for sustainable aviation: a review of current trends and future prospects}. Applied Energy / ScienceDirect, 2025. Energy densities reported: jet fuel \SI{12000}{Wh/kg}; current Li-Ion up to \SI{330}{Wh/kg}; solid-state up to \SI{400}{Wh/kg}. Disponível em: \url{https://www.sciencedirect.com/science/article/pii/S0306261925010864}
+
+    \bibitem{aerospace_america_batteries}
+    Aerospace America (AIAA). \textit{The Buzz Over Batteries}. ``Jet A, the standard kerosene fuel for commercial and military aircraft, has an energy density of 12,000 watt-hours per kilogram.'' Disponível em: \url{https://aerospaceamerica.aiaa.org/features/the-buzz-over-batteries/}
+
+    \bibitem{nas_army_fuels}
+    National Academies of Sciences, Engineering, and Medicine. \textit{Powering the U.S. Army of the Future}, Chapter 3: ``Energy Sources, Conversion Devices, and Storage''. Washington, DC: The National Academies Press, 2021. doi:10.17226/26052. ``Ethanol [...] have 69 percent [...] of the energy content per unit volume of JP8.''
+
+    \bibitem{cfisteph_density}
+    CFI Steph. \textit{Density Altitude --- Effects on Engine Power}. ``A normally aspirated aircraft engine will lose approximately 3.5 percent of its horsepower for every 1,000-foot increase in density altitude.'' Acessado em maio de 2026. Disponível em: \url{https://www.cfisteph.com/densityaltitude}
+
+    \bibitem{embraer202_wiki}
+    Wikipedia / Embraer. \textit{Embraer EMB 202 Ipanema --- General Characteristics}. ``Hopper capacity: 950 litres [...] Max takeoff weight: 1,800 kg [...] Empty weight: 1,020 kg [...] Fuel capacity: 264 litres usable.'' Disponível em: \url{https://en.wikipedia.org/wiki/Embraer_EMB_202_Ipanema}
+
+    \bibitem{wiki_hybrid_electric}
+    Wikipedia. \textit{Hybrid electric aircraft}. ``The Diamond DA36 E-Star [...] reducing fuel consumption and emissions by up to 25\%.'' Disponível em: \url{https://en.wikipedia.org/wiki/Hybrid_electric_aircraft}
+
+    \bibitem{sciencedirect_hybrid}
+    Pornet, C.; Isikveren, A. T. \textit{Conceptual design of hybrid-electric transport aircraft / Hybrid electric aircraft design with optimal power management}. ScienceDirect. ``Retrofit Do-228 found block fuel reductions of approximately 30\% for serial and parallel architectures.'' Disponível em: \url{https://www.sciencedirect.com/science/article/abs/pii/S1270963824006102}
+
+    \bibitem{fuel_economy_hybrid}
+    Voskuijl, M.; et al. \textit{Fuel economy of hybrid electric flight}. Applied Energy / ScienceDirect, 2017. ``Improvement up to 12\% in fuel consumption with respect to a non-hybrid case.'' Disponível em: \url{https://www.sciencedirect.com/science/article/abs/pii/S0306261917312631}
+
+    \bibitem{ampaire_demo}
+    Aerospace America (AIAA). \textit{Hybrid Aircraft One Step Toward the Future of Aviation}. ``Ampaire demonstrated up to 40\% fuel-cost savings'' em rotas inter-ilhas no Havaí. Disponível em: \url{https://aerospaceamerica.aiaa.org/institute/hybrid-aircraft-one-step-toward-the-future-of-aviation/}
+
+    \bibitem{hartzell_trailblazer}
+    Hartzell Propeller Inc. \textit{Trailblazer Composite Propeller --- Technical Description}. ``Materials [...] 20\% lighter than aluminum blade propellers.'' Acessado em maio de 2026.
+
+    \bibitem{hartzell_composite_faq}
+    Hartzell Propeller Inc. \textit{Composite Propellers: Why Make the Switch?} / \textit{Technical FAQ}. ``Structural composite blades offer a substantial weight reduction over aluminum propeller blades.'' Disponível em: \url{https://hartzellprop.com/composite-propellers-why-make-the-switch/}
+
+    \bibitem{agnav_official}
+    AG-NAV Inc. \textit{AG-NAV GPS Precision Navigation Systems --- Ag-Flow and Ag-Gate Application Control}. Disponível em: \url{https://www.agnav.com/}
+
+    \bibitem{satloc_intelliflow}
+    Satloc / Hemisphere GNSS. \textit{IntelliFlow 2 / IntelliFlow 3 Aerial Spray Flow Control System --- Variable Rate based on Prescription Maps (PMAPs)}. Disponível em: \url{https://www.satloc.com/products/intelliflow-2/}
+
+    \bibitem{tracmap_aviation}
+    TracMap. \textit{TracMap Aviation System with Variable Rate Flow Controller --- Press Release}. AgAir Update, 2023. Disponível em: \url{https://agairupdate.com/2023/03/03/tracmap-releases-fully-integrated-variable-rate-flow-controller-for-aviation/}
+
+    \bibitem{kirk_1996_satloc}
+    Kirk, I. W. \textit{Precision GPS Flow Control for Aerial Spray Applications}. In: Precision Agriculture Proceedings, ASA-CSSA-SSSA Books, Wiley, 1996. doi:10.2134/1996.precisionagproc3.c96. Estudo conduzido em Cessna AgHusky com sistema Satloc AIRSTAR.
+
+    \bibitem{jpi_edm900}
+    J. P. Instruments. \textit{EDM-900 Primary Engine Monitor --- Certified Replacement for Analog Engine Gages}. Inclui RPM, MAP, EGT/CHT, fluxo, pressões e temperaturas. Disponível em: \url{https://www.jpinstruments.com/}
+
+    \bibitem{jpi_edm930_manual}
+    J. P. Instruments. \textit{Pilot's Guide --- Engine Data Management EDM-930 Primary TSO}. Manual operacional. Disponível em: \url{https://www.jpinstruments.com/wp-content/uploads/2012/08/PG-EDM-930-Primary-REV-K-02-22-16-pls-Repaired.pdf}
+
+    \bibitem{aopa_lop}
+    Aircraft Owners and Pilots Association (AOPA). \textit{Technique: Lean-of-peak engine operations}. AOPA Flight Training Magazine, 2019. ``Running aircraft engines lean of peak typically reduces airspeed about 5 percent in cruise while lowering fuel consumption about 20 percent.'' Disponível em: \url{https://www.aopa.org/news-and-media/all-news/2019/may/flight-training-magazine/technique-lean-of-peak}
+
+    \bibitem{aviation_consumer_gami}
+    Aviation Consumer / AVweb. \textit{GAMIjectors: Precision Fuel Injection (18 Years)}. ``Saving generally in the range of two to three GPH when operating LOP, lower CHT, fewer fouled plugs and longer cylinder and engine life.'' Disponível em: \url{https://aviationconsumer.com/industry-news/gamijectors-precision-fuel-injection/}
 
 \end{thebibliography}
 
