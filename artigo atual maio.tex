@@ -19,6 +19,16 @@
 % Macro para destacar trechos sem citação (autoavaliar depois): negrito + sublinhado
 % Usa apenas comandos padrão LaTeX para máxima compatibilidade
 \newcommand{\autoeval}[1]{\textbf{\underline{#1}}}
+% ===================================================================
+% MARCADORES DE REVISÃO (revisão de maio/2026)
+% \citesugerida{texto} -> trecho que PRECISA de uma fonte mas ainda
+%                          NÃO existe referência adequada na bibliografia.
+%                          Renderiza em itálico. Procure no PDF e busque fonte.
+% Para DESLIGAR todos os realces de revisão antes de entregar a versão
+% final, basta trocar as duas definições abaixo por: \newcommand{\citesugerida}[1]{#1}
+\usepackage{xcolor}
+\newcommand{\citesugerida}[1]{{\color{red}\textit{[FALTA FONTE: }#1\textit{]}}}
+% ===================================================================
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -29,7 +39,8 @@
     pdfencoding=auto
 }
 
-\title{\textbf{PIBITI}\\ °\\Análise Comparativa de Motores e Hélices de uso em Aeronaves Agrícolas de Asa Fixa}
+\title{\textbf{PIBITI}\\[0.3em]Análise Comparativa de Motores e Hélices de uso em Aeronaves Agrícolas de Asa Fixa}
+% [REVISAO] removido o caractere "°" perdido no titulo. Conferir: o plano de trabalho usa "PIBIT"; o titulo usa "PIBITI". Padronizar.
 \author{Vinicius Andrade Trento}
 \date{\today}
 \onehalfspacing
@@ -46,7 +57,7 @@
 
 O presente relatório constitui a execução da fase de pesquisa fundamental delineada no Plano de Trabalho PIBIT, com foco específico no desenvolvimento de soluções para o projeto NAPI - Aeronaves de Pequeno Porte. A missão central consiste em subsidiar a engenharia de sistemas para o AGRO-VANT, uma plataforma de asa fixa destinada a operações agrícolas que exigem robustez para cargas úteis elevadas e autonomia estendida.
 
-A transição das configurações multirrotor para arquiteturas de asa fixa apresenta-se como uma evolução técnica necessária para maximizar a cobertura de área por voo e otimizar a eficiência energética. Essa mudança justifica-se pela limitação dos multirrotores em satisfazer requisitos de larga escala, dada a sua dependência de sustentação vetorial contínua. Contudo, à medida que a plataforma escala em massa máxima de decolagem (MTOW), o problema deixa de ser apenas de seleção de componentes COTS (\textit{Commercial Off-The-Shelf}) e passa a se inserir em um regime de engenharia aeronáutica certificada, com requisitos termodinâmicos, estruturais e regulatórios substancialmente distintos dos VANTs convencionais.
+A transição das configurações multirrotor para arquiteturas de asa fixa apresenta-se como uma evolução técnica necessária para maximizar a cobertura de área por voo e otimizar a eficiência energética. Essa mudança justifica-se pela limitação dos multirrotores em satisfazer requisitos de larga escala, dada a sua dependência de sustentação vetorial contínua.\citesugerida{afirmacao sobre menor eficiencia energetica de multirrotores frente a asa fixa em cobertura de area --- sugere-se citar revisao sobre VANTs agricolas (p.ex. estudo comparativo de enduranca/area por voo entre VTOL e asa fixa).} Contudo, à medida que a plataforma escala em massa máxima de decolagem (MTOW), o problema deixa de ser apenas de seleção de componentes COTS (\textit{Commercial Off-The-Shelf}) e passa a se inserir em um regime de engenharia aeronáutica certificada, com requisitos termodinâmicos, estruturais e regulatórios substancialmente distintos dos VANTs convencionais.
 
 \subsection{Definição do Escopo: Aeronaves Agrícolas Leves Tripuladas (1{,}0 a 2{,}5 t)}
 
@@ -55,7 +66,7 @@ O presente trabalho concentra-se na faixa de Peso Máximo de Decolagem (MTOW) en
 \begin{itemize}
     \item \textbf{Maturidade tecnológica e disponibilidade de dados:} A faixa abriga plataformas operacionais consolidadas há mais de cinco décadas (Piper PA-25 Pawnee, Cessna 188 AgWagon, Piper PA-36 Pawnee Brave, Embraer EMB-200/201/202 Ipanema), o que assegura uma base extensa de dados de campo, manuais técnicos e referências normativas para análise comparativa.
     \item \textbf{Convergência tecnológica em motor de pistão de grande cilindrada:} Diferentemente da faixa abaixo de \SI{600}{kg} (dominada por motores 2T COTS) ou da faixa acima de \SI{4000}{kg} (dominada por turboélices PT6A), o segmento 1--2{,}5 t apresenta soluções tecnologicamente convergentes em motores aeronáuticos de pistão de 6 a 8 cilindros horizontalmente opostos (boxer), com potências entre \SI{235}{HP} e \SI{400}{HP}.
-    \item \textbf{Aderência ao mercado brasileiro:} O EMB-202 Ipanema (MTOW \SI{1800}{kg}) detém aproximadamente 80\% da frota de pulverização aérea brasileira, situando-se exatamente no centro da faixa estudada.
+    \item \textbf{Aderência ao mercado brasileiro:} O EMB-202/203 Ipanema (MTOW \SI{1800}{kg}) é a plataforma líder da pulverização aérea brasileira, com cerca de 60\% de participação na frota nacional \cite{embraer_1700}, situando-se exatamente no centro da faixa estudada. % [REVISAO] dado corrigido de ~80% para ~60% (fonte oficial Embraer 2025) e citacao adicionada
     \item \textbf{Quadro regulatório bem estabelecido:} Toda a faixa é regida pelos mesmos regulamentos (FAR 23 / RBAC 23 para aeronavegabilidade, FAR 137 / RBAC 137 para operação), permitindo um tratamento unificado dos requisitos de certificação.
 \end{itemize}
 
@@ -171,7 +182,7 @@ Comparada à carburação convencional, a injeção mecânica oferece vantagens 
     \item Resposta rápida do motor em transientes de potência (\textit{throttle response}), crítica em pulverização de baixa altitude.
 \end{itemize}
 
-A migração para sistemas eletrônicos de injeção e ignição (FADEC --- \textit{Full Authority Digital Engine Control}) é uma tendência emergente, exemplificada pela linha Lycoming iE2, que oferece controle eletrônico integral com sensores MAP (\textit{Manifold Absolute Pressure}) e IAT (\textit{Intake Air Temperature}). O FADEC ajusta automaticamente a razão estequiométrica da mistura combustível e ar, ângulo de ignição (pré-ignição) e mistura para densidade local do ar, eliminando a necessidade de ajuste manual de mistura pelo piloto. Para operações em densidade de altitude variável (planaltos brasileiros, com elevações de \SI{600}{m} a \SI{1100}{m}), essa correção automática representa ganho mensurável de eficiência operacional que provém de fundamentos de regimes de trabalho do motor: regime pobre, regime economico e regime rico (alto desempenho).
+A migração para sistemas eletrônicos de injeção e ignição (FADEC --- \textit{Full Authority Digital Engine Control}) é uma tendência emergente, exemplificada pela linha Lycoming iE2, que oferece controle eletrônico integral com sensores MAP (\textit{Manifold Absolute Pressure}) e IAT (\textit{Intake Air Temperature}). O FADEC ajusta automaticamente a razão estequiométrica da mistura combustível e ar, ângulo de ignição (pré-ignição) e mistura para densidade local do ar, eliminando a necessidade de ajuste manual de mistura pelo piloto. Para operações em densidade de altitude variável (planaltos brasileiros, com elevações de \SI{600}{m} a \SI{1100}{m}), essa correção automática representa ganho mensurável de eficiência operacional, ao manter o motor próximo do regime de mistura desejado (regime pobre/econômico em cruzeiro ou regime rico de alto desempenho em decolagem) sem intervenção manual do piloto. % [REVISAO] final do paragrafo reescrito para clareza
 
 
 
@@ -180,7 +191,7 @@ A migração para sistemas eletrônicos de injeção e ignição (FADEC --- \tex
 
 \subsection{A Família Lycoming O-540 e o Ipanema}
 
-A aeronave agrícola de referência no Brasil é o Embraer/Neiva EMB-202 Ipanema, com mais de \num{1700} unidades entregues e participação de mercado próxima a 80\% da frota brasileira de pulverização aérea \cite{embraer202}. Suas especificações técnicas servem como \textit{benchmark} para qualquer plataforma de Classe IV nacional.
+A aeronave agrícola de referência no Brasil é o Embraer/Neiva Ipanema, com cerca de \num{1700} unidades entregues ao longo de mais de cinco décadas de produção e participação de mercado próxima a 60\% da frota brasileira de pulverização aérea \cite{embraer_1700}. Suas especificações técnicas servem como \textit{benchmark} para qualquer plataforma de Classe IV nacional. \citesugerida{Observacao: a versao atualmente em producao e o EMB-203 (nao o EMB-202); o EMB-202A a etanol discutido adiante e a referencia historica para operacao com etanol, mas convem checar se o artigo deve adotar o EMB-203 como benchmark atual.}
 
 \begin{itemize}
     \item \textbf{MTOW:} \SI{1800}{kg}
@@ -212,7 +223,7 @@ O gráfico apresenta duas famílias de curvas:
 
 \begin{itemize}
     \item \textbf{Mistura de Melhor Potência (\textit{Best Power}):} Razão ar/combustível ligeiramente rica (em torno de 12{,}5:1), maximizando o torque entregue. Adequada às fases de decolagem, ganho de altitude e manobras de retorno em pulverização agrícola.
-    \item \textbf{Mistura de Melhor Economia (\textit{Best Economy}):} Razão ar/combustível próxima à estequiométrica (cerca de 14{,}7:1) ou ligeiramente pobre. Adequada ao cruzeiro e a deslocamentos, reduzindo o consumo específico em até 15\%.
+    \item \textbf{Mistura de Melhor Economia (\textit{Best Economy}):} Razão ar/combustível próxima à estequiométrica (cerca de 14{,}7:1) ou ligeiramente pobre. Adequada ao cruzeiro e a deslocamentos, reduzindo o consumo específico em até 15\% em relação à mistura de melhor potência \cite{io360manual}. % [REVISAO] citacao adicionada (manual IO-360, mesma curva ja referenciada na secao)
 \end{itemize}
 
 Para o IO-360 (200 HP), os dados extraídos da curva indicam consumo de aproximadamente \SI{85}{lb/h} a \SI{170}{HP} (75\% da potência nominal, regime de cruzeiro típico) em mistura \textit{best power}, e \SI{75}{lb/h} no mesmo regime em mistura \textit{best economy}. Esses valores correspondem a um BSFC de aproximadamente \SI{0.50}{lb/(hp \cdot h)} e \SI{0.44}{lb/(hp \cdot h)} respectivamente, equivalentes a \SI{304}{g/(kW \cdot h)} e \SI{268}{g/(kW \cdot h)} \cite{io360manual}.
@@ -283,7 +294,7 @@ A demanda por sistemas de menor impacto ambiental impulsionou pesquisas em plata
 
 \subsection{Tração Puramente Elétrica}
 
-A inviabilidade da tração puramente elétrica para aeronaves agrícolas de 1 a 2{,}5 t é demonstrada quantitativamente pelo balanço de massa de baterias. Tomando como caso de referência o IO-540-K1J5 do EMB-202 Ipanema (\SI{320}{HP} $\approx$ \SI{239}{kW}) operando por 2 horas em regime de cruzeiro a 75\% da potência nominal (\SI{179}{kW}), e adotando como densidade de energia da bateria os valores limítrofes da literatura: Li-Ion atual em torno de \SI{250}{Wh/kg} (próximo ao limite superior dos sistemas embarcados comercialmente disponíveis \cite{battery_aviation_review, aerospace_america_batteries}) e Li-S em desenvolvimento em torno de \SI{500}{Wh/kg} (limite teórico próximo da fronteira ainda não realizada comercialmente \cite{battery_aviation_review}), o cálculo conduzido pelo autor é o seguinte:
+A inviabilidade da tração puramente elétrica para aeronaves agrícolas de 1 a 2{,}5 t é demonstrada quantitativamente pelo balanço de massa de baterias.\citesugerida{INCONSISTENCIA INTERNA: aqui usam-se Li-Ion $\approx$250 Wh/kg e Li-S $\approx$500 Wh/kg, mas a Secao 3 (e a entrada bibliografica battery\_aviation\_review) cita Li-Ion ate 330 Wh/kg e estado solido ate 400 Wh/kg. Reconciliar os valores entre as secoes e confirmar qual fonte sustenta cada numero (250/500 nao batem com a referencia citada).} Tomando como caso de referência o IO-540-K1J5 do EMB-202 Ipanema (\SI{320}{HP} $\approx$ \SI{239}{kW}) operando por 2 horas em regime de cruzeiro a 75\% da potência nominal (\SI{179}{kW}), e adotando como densidade de energia da bateria os valores limítrofes da literatura: Li-Ion atual em torno de \SI{250}{Wh/kg} (próximo ao limite superior dos sistemas embarcados comercialmente disponíveis \cite{battery_aviation_review, aerospace_america_batteries}) e Li-S em desenvolvimento em torno de \SI{500}{Wh/kg} (limite teórico próximo da fronteira ainda não realizada comercialmente \cite{battery_aviation_review}), o cálculo conduzido pelo autor é o seguinte:
 
 \begin{itemize}
     \item \textbf{Energia necessária:} $E = 179\,\si{kW} \times 2\,\si{h} = 358\,\si{kWh}$
@@ -363,7 +374,7 @@ Para garantir a segurança operacional e o monitoramento detalhado de aeronaves 
     
     \item \textbf{Sistemas Específicos de Aviação Agrícola:} Plataformas agrícolas modernas utilizam sistemas GPS dedicados de provedores especializados como AG-NAV \cite{agnav_official}, Satloc \cite{satloc_intelliflow} e TracMap \cite{tracmap_aviation} para geo-referenciamento da deriva de aplicação e controle automático de vazão (\textit{flow control}) acoplado à velocidade no solo (GS) lida pelo GPS. Esses sistemas permitem aplicação variável de defensivos por zona da lavoura (\textit{variable-rate application}) baseada em mapas de prescrição (PMAPs) \cite{satloc_intelliflow, kirk_1996_satloc}, reduzindo desperdício e impacto ambiental ao corrigir variações na vazão durante passes upwind/downwind em decorrência de mudanças na velocidade no solo \cite{kirk_1996_satloc}.
     
-    \item \textbf{Aviônica de Cabine:} Os dados anteriormente enviado para a cabine por meio Sistemas de Voo Eletrônicos (EFIS) como Garmin G600 TXi ou Avidyne IFD-540, fornecendo informações de motor, navegação e geo-referenciamento de pulverização podem ser enviados Estação de Controle em Solo (GCS - Ground Control Station). Porém alguns exemplos de aeronaves clássicas (Pawnee, AgWagon, Ipanema EMB-201) ainda utilizam instrumentação analógica, dificultando a integração com sistemas de comunicação modernos para drones não tripulados.
+    \item \textbf{Aviônica de Cabine:} Os dados de motor, navegação e geo-referenciamento de pulverização podem ser enviados à cabine por meio de Sistemas de Voo Eletrônicos (EFIS), como o Garmin G600 TXi ou o Avidyne IFD-540, e, a partir destes, retransmitidos a uma Estação de Controle em Solo (GCS --- \textit{Ground Control Station}). Entretanto, alguns exemplares de aeronaves clássicas (Pawnee, AgWagon, Ipanema EMB-201) ainda utilizam instrumentação analógica, o que dificulta a integração com sistemas de comunicação modernos e com arquiteturas de operação não tripulada. % [REVISAO] paragrafo reescrito por sintaxe quebrada no original
 \end{itemize}
 
 \subsection{Monitoramento de Fluidos e Temperatura}
@@ -382,7 +393,7 @@ A precisão na autonomia e a proteção termomecânica demandam sensores de leit
 
 \subsection{Digital Twins}
 
-A integração de \textit{Digital Twins} surge como tecnologia habilitadora para monitoramento em tempo real, manutenção preditiva e simulação de condições de contorno realistas. Para o AGRO-VANT, propõe-se a estruturação de um \textit{digital twin} composto por três camadas: (i) um modelo termodinâmico do conjunto motopropulsor calibrado por dados de bancada e pelas curvas de \textit{Part Throttle Fuel Consumption} apresentadas na Seção \ref{sec:curvas_lycoming}; (ii) um modelo multi-corpo da estrutura da aeronave; e (iii) um modelo de degradação de componentes (fadiga acumulada na hélice, desgaste de cilindros) alimentado pela telemetria embarcada. Essa abordagem está alinhada com práticas emergentes da Embraer e dos fabricantes de motores aeronáuticos para frotas em operação, e pode subsidiar políticas de manutenção baseada em condição (CBM --- \textit{Condition-Based Maintenance}). \autoeval{A quantificação de ganhos específicos (e.g., extensão do TBO efetivo) depende de validação experimental ainda não conduzida no escopo deste estudo, configurando linha de pesquisa para os próximos estágios do projeto.}
+A integração de \textit{Digital Twins} surge como tecnologia habilitadora para monitoramento em tempo real, manutenção preditiva e simulação de condições de contorno realistas. Para o AGRO-VANT, propõe-se a estruturação de um \textit{digital twin} composto por três camadas: (i) um modelo termodinâmico do conjunto motopropulsor calibrado por dados de bancada e pelas curvas de \textit{Part Throttle Fuel Consumption} apresentadas na Seção \ref{sec:curvas_lycoming}; (ii) um modelo multi-corpo da estrutura da aeronave; e (iii) um modelo de degradação de componentes (fadiga acumulada na hélice, desgaste de cilindros) alimentado pela telemetria embarcada. Essa abordagem está alinhada com práticas emergentes da Embraer e dos fabricantes de motores aeronáuticos para frotas em operação,\citesugerida{afirmacao especifica sobre adocao de digital twins pela Embraer/fabricantes de motores --- sugere-se citar material institucional da Embraer sobre digital twin/saude de frota ou artigo de revisao sobre digital twins em aeronautica; sem fonte na bibliografia atual.} e pode subsidiar políticas de manutenção baseada em condição (CBM --- \textit{Condition-Based Maintenance}). \autoeval{A quantificação de ganhos específicos (e.g., extensão do TBO efetivo) depende de validação experimental ainda não conduzida no escopo deste estudo, configurando linha de pesquisa para os próximos estágios do projeto.}
 
 \section{Referências Normativas e Requisitos de Certificação}
 
@@ -391,15 +402,15 @@ A operação e certificação de aeronaves agrícolas tripuladas na faixa de 1 a
 \begin{itemize}
     \item \textbf{RBAC 23:} Estabelece os requisitos de aeronavegabilidade para aeronaves de categoria normal (MTOW $\leq$ \SI{8618}{kg}) \cite{anacrbac23}. É o regulamento aplicável a todas as aeronaves de referência analisadas neste trabalho (Pawnee, AgWagon, Ipanema, Pawnee Brave). Equivalente ao FAR 23 (FAA) e CS-23 (EASA).
     
-    \item \textbf{RBAC 33:} Regulamento de certificação de motores aeronáuticos a pistão. Todos os motores Lycoming O-540, IO-540 e IO-720, bem como os Continental IO-520 e TSIO-520 mencionados neste trabalho, possuem certificações da FAA sob o predecessor CAR 13 ou RBAC 33, com type certificates específicos (e.g., TC 1E4 para a família IO-540, TC E-295 para a O-540).
+    \item \textbf{RBAC 33:} Regulamento de certificação de motores aeronáuticos a pistão. Todos os motores Lycoming O-540, IO-540 e IO-720, bem como os Continental IO-520 e TSIO-520 mencionados neste trabalho, possuem certificações da FAA sob o predecessor CAR 13 ou RBAC 33, com type certificates específicos (e.g., TC 1E4 para a família IO-540, TC E-295 para a O-540).\citesugerida{RBAC 33 e os numeros de Type Certificate (1E4, E-295) nao tem entrada na bibliografia --- sugere-se citar o proprio RBAC 33 (ANAC) e os TCDS correspondentes da FAA.}
     
-    \item \textbf{RBAC 35:} Regulamento de certificação de hélices. As hélices Hartzell e McCauley utilizadas nas aeronaves de referência possuem type certificates próprios (e.g., Hartzell HC-C2YK sob TC P-924).
+    \item \textbf{RBAC 35:} Regulamento de certificação de hélices. As hélices Hartzell e McCauley utilizadas nas aeronaves de referência possuem type certificates próprios (e.g., Hartzell HC-C2YK sob TC P-924).\citesugerida{RBAC 35 e o TC P-924 nao tem entrada na bibliografia --- sugere-se citar o RBAC 35 (ANAC) e o TCDS da helice.}
     
-    \item \textbf{RBAC 137 --- Emenda nº 05 (Resolução nº 716/2023):} Em vigor desde 2 de outubro de 2023, estabelece o cadastro e os requisitos operacionais para operações aeroagrícolas no Brasil \cite{anac137}. A principal mudança da Emenda 05 foi a substituição do antigo Certificado de Operador Aéreo (COA) pelo Cadastro de Operador Aeroagrícola (CDAG), simplificando o processo de habilitação. A frota brasileira ao abrigo do regulamento conta com aproximadamente \num{2500} aeronaves, em sua maioria Ipanemas e variantes \cite{anac137}.
+    \item \textbf{RBAC 137 --- Emenda nº 05 (Resolução nº 716/2023):} Em vigor desde 2 de outubro de 2023, estabelece o cadastro e os requisitos operacionais para operações aeroagrícolas no Brasil \cite{anac137}. A principal mudança da Emenda 05 foi a substituição do antigo Certificado de Operador Aéreo (COA) pelo Cadastro de Operador Aeroagrícola (CDAG), simplificando o processo de habilitação. Segundo o levantamento anual do Sindag, a frota aeroagrícola brasileira fechou 2025 com aproximadamente \num{2866} aeronaves, em sua maioria a pistão e com forte presença de Ipanemas e variantes \cite{sindag_frota2025}. % [REVISAO] dado atualizado de ~2500 para 2866 (Sindag 2025) e atribuicao corrigida: o numero da frota vem do Sindag, nao do RBAC 137
     
     \item \textbf{IS 137.201-001E:} Instrução Suplementar que regulamenta o uso do etanol em aeronaves agrícolas, exigindo Autorização Especial de Voo (AEV) emitida sob a Subparte 21.175 do RBAC 21 \cite{anacis137}. Aplicável especificamente ao caso do EMB-202A.
     
-    \item \textbf{Normas ABNT aplicáveis:} A ABNT NBR ISO 9001 é referência para sistemas de qualidade em fabricantes; a NBR 14785 trata da segurança operacional na aviação agrícola; e a NBR ISO 21384 (em adaptação a partir do ISO/TC 20/SC 16) cobre futuras aeronaves não tripuladas. Para o segmento tripulado tradicional da faixa, a referência normativa principal permanece sendo os RBACs.
+    \item \textbf{Normas ABNT aplicáveis:} A ABNT NBR ISO 9001 é referência para sistemas de qualidade em fabricantes; a NBR 14785 trata da segurança operacional na aviação agrícola; e a NBR ISO 21384 (em adaptação a partir do ISO/TC 20/SC 16) cobre futuras aeronaves não tripuladas. Para o segmento tripulado tradicional da faixa, a referência normativa principal permanece sendo os RBACs.\citesugerida{as normas ABNT citadas (NBR ISO 9001, NBR 14785, NBR ISO 21384) nao tem entrada na bibliografia --- sugere-se citar cada norma no catalogo da ABNT; verificar tambem se NBR 14785 trata mesmo de seguranca na aviacao agricola.}
     
     \item \textbf{FAR Part 137 (FAA) e CS-VLA / CS-23 (EASA):} Regulamentos internacionais análogos, relevantes para certificação cruzada via acordos bilaterais (e.g., o BASA Brasil-EUA, que reconhece automaticamente type certificates da FAA na frota brasileira).
 \end{itemize}
@@ -484,6 +495,9 @@ O estudo demonstra que a faixa de aeronaves agrícolas tripuladas de 1 a 2{,}5 t
     \bibitem{embraer202}
     Embraer / Indústria Aeronáutica Neiva. \textit{EMB-200, EMB-201, EMB-202 e EMB-203 Ipanema --- Especificações Técnicas}. Botucatu, Brasil. Acessado em: 12 de maio de 2026.
 
+    \bibitem{embraer_1700}
+    Embraer. \textit{Embraer celebra 1.700 unidades entregues do avião agrícola Ipanema}. Media Center, Botucatu, 19 de novembro de 2025. Versão atual EMB-203, com $\sim$60\% de participação no mercado nacional de pulverização. Disponível em: \url{https://www.embraer.com/media-center/pt/?detail=23507&mediatype=NEWS} % [REVISAO] referencia nova adicionada
+
     \bibitem{piper_pa25}
     Piper Aircraft Corporation. \textit{PA-25 Pawnee Type Certificate Data Sheet and Pilot's Operating Handbook}. Variantes PA-25-150 (Lycoming O-320), PA-25-235 Pawnee B/C/D (Lycoming O-540-B2B5) e PA-25-260 (Lycoming O-540-E4B5). Acessado em: 12 de maio de 2026.
 
@@ -503,6 +517,9 @@ O estudo demonstra que a faixa de aeronaves agrícolas tripuladas de 1 a 2{,}5 t
 
     \bibitem{anacrbac23}
     Agência Nacional de Aviação Civil (ANAC). \textit{RBAC nº 23 --- Requisitos de Aeronavegabilidade: Aviões Categoria Normal}. Aplicável a aeronaves com MTOW $\leq$ \SI{8618}{kg}.
+
+    \bibitem{sindag_frota2025}
+    Sindicato Nacional das Empresas de Aviação Agrícola (SINDAG). \textit{Análise da Frota Aeroagrícola Brasileira de Aviões e Helicópteros 2025}. Autor: Cláudio Júnior Oliveira Gomes. Frota registrada na ANAC: 2.866 aeronaves ao final de 2025 (crescimento de 5,25\% sobre 2024). Acessado em: maio de 2026. % [REVISAO] referencia nova adicionada
 
     % ==== Referências adicionais (revisão de citações) ====
 
