@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.cambridge.org)",
+      "WebFetch(domain:eprints.gla.ac.uk)",
+      "WebFetch(domain:w2.fop.unicamp.br)",
+      "WebFetch(domain:www1.abendi.org.br)",
+      "WebFetch(domain:www.sciencedirect.com)",
+      "WebFetch(domain:ui.adsabs.harvard.edu)",
+      "WebFetch(domain:ideas.repec.org)",
+      "PowerShell(pdflatex -interaction=nonstopmode -output-directory=build \"Relat�rio final - Vinicius Trento.tex\")"
+    ]
+  }
+}
